@@ -45,7 +45,7 @@ exports.commands = {
     });
 
     const replay = users
-      .map((user) => `😀 <@${user.userId}> | 🔊 ${user.audioUrl}`)
+      .map((user) => `😀 <@${user.userId}> 🔊 ${user.audioUrl}`)
       .join("\n ");
 
     return `List of sounds: \n ${replay}`;

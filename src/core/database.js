@@ -5,24 +5,24 @@ const database = new Sequelize({
   storage: "./database.sqlite3",
 });
 
-const User = database.define("User", {
+const Sound = database.define("Sound", {
   guildId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  userId: {
+  soundId: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  audioUrl: {
+  soundUrl: {
     type: DataTypes.STRING,
-    // allowNull defaults to true
+    allowNull: false,
   },
 });
 
 database.sync();
 
 module.exports = {
-  User,
+  Sound,
   database,
 };

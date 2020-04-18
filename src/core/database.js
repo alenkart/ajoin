@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require("sequelize");
 
 const database = new Sequelize({
   dialect: "sqlite",
-  storage: "./database.sqlite3",
+  storage: process.env.DATABASE_NAME,
 });
 
 const Sound = database.define("Sound", {

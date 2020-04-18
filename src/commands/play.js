@@ -1,18 +1,13 @@
-const { Sound } = require("../core/database");
-module.exports = {
-  name: "play",
-  async execute(guildId, soundId, channel) {
-    const sound = await Sound.findOne({
-      where: { guildId, soundId },
-      raw: true,
-    });
+const playSound = require("../core/playsound")
+const { Command } = require("../core/command");
+const { messageParser } = require("../core/utils");
 
-    if (!sound) return;
+const command = new Command("play");
 
-    const connection = await channel.join();
-    const dispatcher = connection.play(sound.soundUrl, {
-      volume: 0.5,
-    });
-    dispatcher.on("finish", () => dispatcher.destroy());
-  },
-};
+command.execute = async function (message) {
+  const { args, guildId } = messageParser(message);
+  const [soundId] = args;
+  await playSound(message.member.voice.channel, guildId, soundId);
+}
+
+module.exports = command;

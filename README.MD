@@ -5,5 +5,5 @@
 ### .env file
 ```
 DISCORD_TOKEN=<Discord toke>
-DB_NAME=<Database name>
+DATABASE_NAME=<Database name>
 ```

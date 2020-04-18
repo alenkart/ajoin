@@ -1,13 +1,20 @@
 const { Sound } = require("../core/database");
+const { Command } = require("../core/command");
+const { messageParser } = require("../core/utils");
 
-module.exports = {
-  name: "remove",
-  async execute(guildId, soundId) {
-    await Sound.destroy({
-      where: {
-        guildId,
-        soundId,
-      },
-    });
-  },
-};
+const command = new Command("remove");
+
+command.execute = async function (message) {
+
+  const { guildId, args } = messageParser(message);
+  const [soundId] = args;
+
+  await Sound.destroy({
+    where: {
+      guildId,
+      soundId,
+    },
+  });
+}
+
+module.exports = command;

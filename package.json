@@ -8,6 +8,10 @@
   },
   "author": "",
   "license": "ISC",
+  "keywords": [
+    "heroku",
+    "discord.js"
+  ],
   "dependencies": {
     "@discordjs/opus": "^0.1.0",
     "discord.js": "^12.1.1",

@@ -12,4 +12,4 @@ bot.on("ready", () => {
 bot.on("message", message);
 bot.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(bot, oldMember, newMember));
 
-bot.login(process.env.DISCORD_TOKEN);
+bot.login();

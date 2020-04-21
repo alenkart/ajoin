@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +16,8 @@
     "sequelize": "^5.21.6",
     "sqlite3": "^4.1.1",
     "validator": "^13.0.0"
+  },
+  "engines": {
+    "node": "12.16.x"
   }
 }

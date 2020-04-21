@@ -1,4 +1,3 @@
-
 const playSound = require("./playsound");
 const { getUserMention } = require("./utils");
 
@@ -10,15 +9,14 @@ function VoiceStateUpdate(client, oldMember, newMember) {
 
     this.isBot = function () {
         return this.member && this.member.id === this.client.user.id;
-    }
+    };
 
     this.handler = function () {
-
         const newChannel = this.newMember.channel;
         const oldChannel = this.oldMember.channel;
 
         if (this.isBot()) {
-            this.onBot();
+            this.onBot && this.onBot();
         } else if (!oldChannel) {
             this.onJoinChannel();
         } else if (!newChannel) {
@@ -36,44 +34,17 @@ function VoiceStateUpdate(client, oldMember, newMember) {
         } else {
             this.onUnhandled();
         }
-    }
+    };
 
-    this.onBot = function () {
-        console.log("Bot");
-    }
-
-    this.onJoinChannel = function () {
-        console.log("Join");
-    }
-
-    this.onLeaveChannel = function () {
-        console.log("Leave");
-    }
-
-    this.onSwtichChannel = function () {
-        console.log("Switch");
-    }
-
-    this.onMute = function () {
-        console.log("Mute");
-    }
-
-    this.onUnmute = function () {
-        console.log("Unmute");
-    }
-
-    this.onDeaf = function () {
-        console.log("Deaf");
-    }
-
-    this.onUndeaf = function () {
-        console.log("Undeaf");
-    }
-
-    this.onUnhandled = function () {
-        console.log("Unhandled");
-    }
-
+    this.onBot = function () { };
+    this.onJoinChannel = function () { };
+    this.onLeaveChannel = function () { };
+    this.onSwtichChannel = function () { };
+    this.onMute = function () { };
+    this.onUnmute = function () { };
+    this.onDeaf = function () { };
+    this.onUndeaf = function () { };
+    this.onUnhandled = function () { };
 }
 
 function playUserSound(newMember) {
@@ -82,7 +53,6 @@ function playUserSound(newMember) {
 }
 
 module.exports = async function (client, oldMember, newMember) {
-
     try {
         const voiceStateUpdate = new VoiceStateUpdate(client, oldMember, newMember);
         voiceStateUpdate.onJoinChannel = () => playUserSound(newMember);
@@ -91,5 +61,4 @@ module.exports = async function (client, oldMember, newMember) {
     } catch (error) {
         console.log(error);
     }
-
 };

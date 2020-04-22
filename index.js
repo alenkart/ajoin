@@ -1,8 +1,8 @@
 require("dotenv").config();
 
-const Discord = require("discord.js");
 const message = require("./src/core/message");
 const voiceStateUpdate = require("./src/core/voiceStateUpdate");
+const Discord = require("discord.js");
 const bot = new Discord.Client();
 
 bot.on("ready", () => {

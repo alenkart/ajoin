@@ -1,9 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-const database = new Sequelize({
-  dialect: "sqlite",
-  storage: process.env.DATABASE_NAME,
-});
+const database = new Sequelize(process.env.DATABASE_URL);
 
 const Sound = database.define("Sound", {
   guildId: {

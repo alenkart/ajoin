@@ -4,6 +4,7 @@
 
 ### .env file
 ```
-DISCORD_TOKEN=<Discord toke>
-DATABASE_URL=<Database url>
+DISCORD_TOKEN=<discord_toke>
+DATABASE_URL=<database_url>
+NODE_ENV=<environment>
 ```

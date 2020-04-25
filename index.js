@@ -3,13 +3,14 @@ require("dotenv").config();
 const message = require("./src/core/message");
 const voiceStateUpdate = require("./src/core/voiceStateUpdate");
 const Discord = require("discord.js");
-const bot = new Discord.Client();
+const client = new Discord.Client();
 
-bot.on("ready", () => {
-  console.log(`Logged in as ${bot.user.tag}!`);
+client.on("ready", () => {
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`Logged in as ${client.user.tag}!`);
 });
 
-bot.on("message", message);
-bot.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(bot, oldMember, newMember));
+client.on("message", message);
+client.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(client, oldMember, newMember));
 
-bot.login();
+client.login();

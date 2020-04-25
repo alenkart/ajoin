@@ -1,4 +1,4 @@
-const { Sound } = require("./database");
+const { Sound } = require("../models");
 
 module.exports = async function (channel, guildId, soundId) {
 

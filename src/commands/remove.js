@@ -1,4 +1,4 @@
-const { Sound } = require("../core/database");
+const { Sound } = require("../models");
 const { Command } = require("../core/command");
 const { messageParser } = require("../core/utils");
 

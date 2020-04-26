@@ -5,7 +5,7 @@ function shouldSkip(message) {
     return message.author.bot || !message.content.startsWith(prefix);
 }
 
-module.exports = async function (message) {
+module.exports = async function (message, client) {
 
     try {
         if (shouldSkip(message)) return;
@@ -14,7 +14,7 @@ module.exports = async function (message) {
 
         if (!command) return;
 
-        await command.execute(message)
+        await command.execute(message, client)
     } catch (error) {
         console.log(error);
         message.channel.send("A wild error has appeared!");

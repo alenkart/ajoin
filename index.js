@@ -10,7 +10,7 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on("message", message);
-client.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(client, oldMember, newMember));
+client.on("message", (msg) => message(msg, client));
+client.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(oldMember, newMember, client));
 
 client.login();

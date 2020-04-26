@@ -1,7 +1,7 @@
 const playSound = require("./playsound");
 const { getUserMention } = require("./utils");
 
-function VoiceStateUpdate(client, oldMember, newMember) {
+function VoiceStateUpdate(oldMember, newMember, client) {
     this.client = client;
     this.oldMember = oldMember;
     this.newMember = newMember;

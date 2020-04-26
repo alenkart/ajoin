@@ -2,7 +2,7 @@ const { Command } = require("../core/command");
 
 const command = new Command("help");
 
-command.execute = function (message) {
+command.execute = async function (message) {
 
   const embed = {
     color: 0x0099ff,
@@ -28,6 +28,10 @@ command.execute = function (message) {
       {
         value: "```$list sound_name```",
         name: "Shows an user detail",
+      },
+      {
+        value: "```$invite```",
+        name: "Shows a link to invite the bot to a server",
       },
     ],
   };

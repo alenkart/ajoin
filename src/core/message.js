@@ -16,7 +16,7 @@ module.exports = async function (message, client) {
 
         await command.execute(message, client)
     } catch (error) {
-        console.log(error);
+        console.log("message", error);
         message.channel.send("A wild error has appeared!");
     }
 

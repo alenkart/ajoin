@@ -52,13 +52,13 @@ function playUserSound(newMember) {
     playSound(newMember.channel, newMember.guild.id, userMention);
 }
 
-module.exports = async function (client, oldMember, newMember) {
+module.exports = async function (oldMember, newMember, client) {
     try {
-        const voiceStateUpdate = new VoiceStateUpdate(client, oldMember, newMember);
+        const voiceStateUpdate = new VoiceStateUpdate(oldMember, newMember, client);
         voiceStateUpdate.onJoinChannel = () => playUserSound(newMember);
         voiceStateUpdate.onSwtichChannel = () => playUserSound(newMember);
         voiceStateUpdate.handler();
     } catch (error) {
-        console.log(error);
+        console.log("voiceStateUpdate", error);
     }
 };

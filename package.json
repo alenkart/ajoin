@@ -1,6 +1,6 @@
 {
-  "name": "join-sound",
-  "version": "1.0.0",
+  "name": "ajoin",
+  "version": "0.0.1-alpha",
   "description": "",
   "main": "index.js",
   "scripts": {

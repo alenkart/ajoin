@@ -1,13 +1,16 @@
+const package = require('../../package.json');
 const { Command } = require("../core/command");
 
 const command = new Command({ name: "help" });
 
 command.execute = async function (message) {
 
+  const content = 'Here is the help!';
+
   const embed = {
     color: 0x0099ff,
     title: "Help",
-    description: "Here is the help!",
+    description: "The `sound_name` can be a word or user mention `@AJoin`",
     fields: [
       {
         value: "```$play sound_name```",
@@ -22,11 +25,11 @@ command.execute = async function (message) {
         name: "Remove a sound",
       },
       {
-        value: "```$list```",
+        value: "```$show```",
         name: "Show all the users details",
       },
       {
-        value: "```$list sound_name```",
+        value: "```$show sound_name```",
         name: "Shows an user detail",
       },
       {
@@ -34,9 +37,13 @@ command.execute = async function (message) {
         name: "Shows a link to invite the bot to a server",
       },
     ],
+    timestamp: new Date(),
+    footer: {
+      text: `Version: ${package.version}`,
+    }
   };
 
-  message.channel.send({ embed });
+  message.channel.send({ content, embed });
 }
 
 module.exports = command;

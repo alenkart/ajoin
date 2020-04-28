@@ -1,12 +1,10 @@
 const { Sound } = require("../models");
 const { Command } = require("../core/command");
-const { messageParser } = require("../core/utils");
 
-const command = new Command("remove");
+const command = new Command({ name: "remove" });
 
-command.execute = async function (message) {
-
-  const { guildId, args } = messageParser(message);
+command.execute = async function (message, args) {
+  const guildId = message.guild.id;
   const [soundId] = args;
 
   await Sound.destroy({
@@ -15,6 +13,8 @@ command.execute = async function (message) {
       soundId,
     },
   });
+
+  message.channel.send(`Sound **${soundId}** has been eliminated`);
 }
 
 module.exports = command;

@@ -1,12 +1,10 @@
 const { Sound } = require("../models");
 const { Command } = require("../core/command");
-const { messageParser } = require("../core/utils");
 
-const command = new Command("set");
+const command = new Command({ name: "set" });
 
-command.execute = async function (message) {
-
-  const { guildId, args } = messageParser(message);
+command.execute = async function (message, args) {
+  const guildId = message.guild.id;
   const [soundId, soundUrl] = args;
 
   await Sound.destroy({

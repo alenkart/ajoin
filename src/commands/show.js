@@ -1,13 +1,16 @@
 const { Sound } = require("../models");
 const { Command } = require("../core/command");
-const { messageParser } = require("../core/utils");
 
-const command = new Command("show");
+const command = new Command({ name: "show" });
 
-command.execute = async function (message) {
-  const { guildId, args } = messageParser(message);
+function soundToString(sound) {
+  return `🔊 ${sound.soundId} 🔗 ${sound.soundUrl}`;
+}
 
-  const soundId = args[0];
+command.execute = async function (message, args) {
+  const guildId = message.guild.id;
+  const [soundId] = args;
+
   let where = { guildId };
 
   if (soundId) {
@@ -19,11 +22,15 @@ command.execute = async function (message) {
     raw: true,
   });
 
-  const result = sounds
-    .map((sound) => `😀 ${sound.soundId} 🔊 ${sound.soundUrl}`)
-    .join("\n");
+  let messageStr = 'I found nothing';;
 
-  message.channel.send(`List of sounds:\n${result}`);
+  if (sounds.length == 1) {
+    messageStr = soundToString(sounds[0]);
+  } else if (sounds.length > 1) {
+    messageStr = sounds.map(soundToString).join('\n');
+  }
+
+  message.channel.send(messageStr);
 }
 
 module.exports = command;

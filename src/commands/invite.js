@@ -1,12 +1,12 @@
 const { Command } = require("../core/command");
 
-const command = new Command("invite");
+const command = new Command({ name: "invite" });
 
 function getLink(client_id) {
     return `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=8`;
 }
 
-command.execute = async function (message, client) {
+command.execute = async function (message, _, client) {
 
     const { user } = client;
 

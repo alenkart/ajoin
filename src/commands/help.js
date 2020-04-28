@@ -1,6 +1,6 @@
 const { Command } = require("../core/command");
 
-const command = new Command("help");
+const command = new Command({ name: "help" });
 
 command.execute = async function (message) {
 

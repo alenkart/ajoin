@@ -1,19 +1,18 @@
 const prefix = "$";
+const yargsParser = require('yargs-parser');
 
 function getUserMention(userId) {
   return `<@!${userId}>`;
 }
 
 function messageParser(message) {
-  const args = message.content.split(" ").filter((arg) => arg);
-  const commandName = args.shift().toLowerCase().replace(prefix, "");
-  const guildId = message.guild.id;
+  const args = yargsParser(message.content)._;
+  const command = args.shift().replace(prefix, '');
 
   return {
+    command,
     args,
-    commandName,
-    guildId,
-  };
+  }
 }
 
 module.exports = {

@@ -50,7 +50,12 @@ function VoiceStateUpdate(oldMember, newMember, client) {
 function playUserSound(newMember) {
     const userMention = getUserMention(newMember.id);
     const playSound = new PlaySound();
-    playSound.play(newMember.channel, newMember.guild.id, userMention);
+
+    playSound.playSound({
+        channel: newMember.channel,
+        guildId: newMember.guild.id,
+        soundId: userMention,
+    });
 }
 
 module.exports = async function (oldMember, newMember, client) {

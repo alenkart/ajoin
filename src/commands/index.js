@@ -4,6 +4,7 @@ const show = require("../commands/show");
 const set = require("../commands/set");
 const remove = require("../commands/remove");
 const invite = require("../commands/invite");
+const talk = require("./talk");
 
 module.exports = {
     help,
@@ -12,4 +13,5 @@ module.exports = {
     set,
     remove,
     invite,
+    ...talk,
 }

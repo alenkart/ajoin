@@ -7,8 +7,17 @@ command.execute = async function (message, args) {
   const guildId = message.guild.id;
   const [soundId] = args;
 
+  if (!soundId) {
+    throw new Error("!soundId");
+  };
+
   const playSound = new PlaySound();
-  playSound.play(message.member.voice.channel, guildId, soundId);
+
+  playSound.playSound({
+    channel: message.member.voice.channel,
+    guildId,
+    soundId,
+  });
 }
 
 module.exports = command;

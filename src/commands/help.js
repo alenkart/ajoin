@@ -36,6 +36,14 @@ command.execute = async function (message) {
         value: "```$invite```",
         name: "Shows a link to invite the bot to a server",
       },
+      {
+        value: "```$talken message```",
+        name: "Speaks the message with english accent",
+      },
+      {
+        value: "```$talkes message```",
+        name: "Speaks the message with spanish accent",
+      },
     ],
     timestamp: new Date(),
     footer: {

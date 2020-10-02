@@ -1,7 +1,7 @@
+var googleTTS = require('google-tts-api');
 const { Sound } = require("../models");
 
 //FIX: Implemente a better error handler
-
 class Playsound {
 
     constructor() {
@@ -9,6 +9,7 @@ class Playsound {
             this.map = {};
             this.maxPlayingTime = 5 * 1000;
             this.maxAfkTime = 30 * 1000;
+            this.volume = 0.8;
 
             Playsound.instance = this;
         }
@@ -16,10 +17,10 @@ class Playsound {
         return Playsound.instance;
     }
 
-    async play(channel, guildId, soundId) {
+    async playSound({ soundId, channel, guildId }) {
 
         if (!channel || !guildId || !soundId) {
-            throw new Error("!channel || !guildId || !soundUrl");
+            throw new Error("!channel || !guildId || !soundId");
         };
 
         const sound = await Sound.findOne({
@@ -31,16 +32,45 @@ class Playsound {
             throw new Error(`Sound ${soundId} not found 🔎`);
         };
 
+        const url = sound.soundUrl;
+
+        await this.playUrl({
+            url,
+            channel,
+            guildId,
+        });
+    }
+
+    async speech({ lang, content, channel, guildId }) {
+
+        if (!channel || !guildId || !content) {
+            throw new Error("!channel || !guildId || !content");
+        };
+
+        const url = await googleTTS(content, lang, 1);
+
+        await this.playUrl({
+            url,
+            channel,
+            guildId,
+        });
+    }
+
+    async playUrl({ url, channel, guildId }) {
+
+        if (!channel || !guildId || !url) {
+            throw new Error("!channel || !guildId || !url");
+        };
+
         const connection = await channel.join();
-        const dispatcher = connection.play(sound.soundUrl, {
-            volume: 0.5,
+        const dispatcher = connection.play(url, {
+            volume: this.volume,
         });
 
         //sound limit time
         setTimeout(() => {
             dispatcher.destroy();
         }, this.maxPlayingTime);
-
 
         this.afk(channel, guildId);
     };

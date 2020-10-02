@@ -7,6 +7,10 @@ command.execute = async function (message, args) {
   const guildId = message.guild.id;
   const [soundId] = args;
 
+  if (!soundId) {
+    throw new Error("!soundId");
+  };
+
   await Sound.destroy({
     where: {
       guildId,

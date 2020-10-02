@@ -1,5 +1,3 @@
-const yargsParser = require('yargs-parser');
-
 module.exports.Command = function ({ name, execute, cooldown = 1 }) {
     this.name = name;
     this.execute = execute;

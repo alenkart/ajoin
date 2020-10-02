@@ -2,28 +2,65 @@ const { Sound } = require("../models");
 
 //FIX: Implemente a better error handler
 
-module.exports = async function (channel, guildId, soundId) {
+class Playsound {
 
-    if (!channel || !guildId || !soundId) {
-        throw new Error("!channel || !guildId || !soundUrl");
+    constructor() {
+        if (!Playsound.instance) {
+            this.map = {};
+            this.maxPlayingTime = 5 * 1000;
+            this.maxAfkTime = 30 * 1000;
+
+            Playsound.instance = this;
+        }
+
+        return Playsound.instance;
+    }
+
+    async play(channel, guildId, soundId) {
+
+        if (!channel || !guildId || !soundId) {
+            throw new Error("!channel || !guildId || !soundUrl");
+        };
+
+        const sound = await Sound.findOne({
+            where: { guildId, soundId },
+            raw: true,
+        });
+
+        if (!sound) {
+            throw new Error(`Sound ${soundId} not found 🔎`);
+        };
+
+        const connection = await channel.join();
+        const dispatcher = connection.play(sound.soundUrl, {
+            volume: 0.5,
+        });
+
+        //sound limit time
+        setTimeout(() => {
+            dispatcher.destroy();
+        }, this.maxPlayingTime);
+
+
+        this.afk(channel, guildId);
     };
 
-    const sound = await Sound.findOne({
-        where: { guildId, soundId },
-        raw: true,
-    });
+    afk(channel, guildId) {
+        //clear the timeout
+        clearTimeout(this.map[guildId]);
 
-    if (!sound) {
-        throw new Error(`Sound ${soundId} not found 🔎`);
-    };
+        //create the timeout
+        const timeout = setTimeout(() => {
+            delete this.map[guildId];
+            channel.leave();
+        }, this.maxAfkTime);
 
-    const connection = await channel.join();
-    const dispatcher = connection.play(sound.soundUrl, {
-        volume: 0.5,
-    });
-
-    //sound limit time
-    setTimeout(() => {
-        dispatcher.destroy();
-    }, 5 * 1000);
+        //set the timeout
+        this.map = {
+            ...this.map,
+            [guildId]: timeout,
+        };
+    }
 }
+
+module.exports = Playsound;

@@ -1,4 +1,4 @@
-const playSound = require("./playsound");
+const PlaySound = require("./playsound");
 const { getUserMention } = require("./utils");
 
 function VoiceStateUpdate(oldMember, newMember, client) {
@@ -49,7 +49,8 @@ function VoiceStateUpdate(oldMember, newMember, client) {
 
 function playUserSound(newMember) {
     const userMention = getUserMention(newMember.id);
-    playSound(newMember.channel, newMember.guild.id, userMention);
+    const playSound = new PlaySound();
+    playSound.play(newMember.channel, newMember.guild.id, userMention);
 }
 
 module.exports = async function (oldMember, newMember, client) {

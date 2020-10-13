@@ -1,23 +1,23 @@
-const PlaySound = require("../core/playsound")
 const { Command } = require("../core/command");
 
-const command = new Command({ name: "play" });
+const command = new Command({ name: "invite" });
 
-command.execute = async function (message, args) {
-  const guildId = message.guild.id;
-  const [soundId] = args;
+function getLink(client_id) {
+    return `https://discordapp.com/oauth2/authorize?client_id=${client_id}&scope=bot&permissions=8`;
+}
 
-  if (!soundId) {
-    throw new Error("!soundId");
-  };
+command.execute = async function (message, _, client) {
 
-  const playSound = new PlaySound();
+    const { user } = client;
 
-  playSound.playSound({
-    channel: message.member.voice.channel,
-    guildId,
-    soundId,
-  });
+    const embed = {
+        color: 0x0099ff,
+        title: 'Invite AJoin 🎉',
+        url: getLink(user.id),
+        description: 'Click on the above link and level up!'
+    };
+
+    message.channel.send({ embed });
 }
 
 module.exports = command;

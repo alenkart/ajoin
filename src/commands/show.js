@@ -1,10 +1,10 @@
 const { Sound } = require("../models");
 const { Command } = require("../core/command");
-
+const { CommandError } = require('../core/errors');
 const command = new Command({ name: "show" });
 
 function soundToString(sound) {
-  return `🔊 ${sound.soundId} 🔗 ${sound.soundUrl}`;
+  return `${sound.soundId} ${sound.soundUrl}`;
 }
 
 async function sendByGroup(message, sounds) {
@@ -16,7 +16,7 @@ async function sendByGroup(message, sounds) {
     return soundToString(sound).slice(0, size);
   });
 
-  for(let i = 0; i <= groups.length; i+=groupSize) {
+  for (let i = 0; i <= groups.length; i += groupSize) {
     let j = groupSize + i;
     j = i > groupSize.length ? groupSize.length : j;
 
@@ -37,12 +37,12 @@ command.execute = async function (message, args) {
 
   const sounds = await Sound.findAll({
     where,
+    order: ['soundId'],
     raw: true,
   });
 
   if (sounds.length < 1) {
-    message.channel.send('I found nothing');
-    return;
+    throw new CommandError('I found nothing');
   }
 
   await sendByGroup(message, sounds);

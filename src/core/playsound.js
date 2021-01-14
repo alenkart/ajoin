@@ -1,5 +1,6 @@
-var googleTTS = require('google-tts-api');
+const googleTTS = require('google-tts-api');
 const { Sound } = require("../models");
+const { CommandError } = require('./errors');
 
 //FIX: Implemente a better error handler
 class Playsound {
@@ -29,7 +30,7 @@ class Playsound {
         });
 
         if (!sound) {
-            throw new Error(`Sound ${soundId} not found 🔎`);
+            throw new CommandError(`Sound not found 🔎`);
         };
 
         const url = sound.soundUrl;

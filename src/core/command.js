@@ -1,3 +1,5 @@
+const { CommandError } = require('./errors');
+
 module.exports.Command = function ({ name, execute, cooldown = 1 }) {
     this.name = name;
     this.execute = execute;
@@ -14,8 +16,7 @@ module.exports.Command = function ({ name, execute, cooldown = 1 }) {
     this.executeCooldown = function (authorId) {
 
         if (this.cooldown.has(authorId)) {
-            message.reply("Let's chill a bit, huh?");
-            return;
+            throw new CommandError("Let's chill a bit, huh?");
         }
 
         this.cooldown.add(authorId);

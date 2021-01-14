@@ -1,4 +1,4 @@
-const PlaySound = require("../core/playsound")
+const PlaySound = require("../core/playsound");
 const { Command } = require("../core/command");
 
 const command = new Command({ name: "play" });
@@ -13,7 +13,7 @@ command.execute = async function (message, args) {
 
   const playSound = new PlaySound();
 
-  playSound.playSound({
+  await playSound.playSound({
     channel: message.member.voice.channel,
     guildId,
     soundId,

@@ -4,7 +4,7 @@ const { CommandError } = require('../core/errors');
 const command = new Command({ name: "show" });
 
 function soundToString(sound) {
-  return `${sound.soundId} ${sound.soundUrl}`;
+  return `🔊 ${sound.soundId} 🔗 ${sound.soundUrl}`;
 }
 
 async function sendByGroup(message, sounds) {

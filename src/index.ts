@@ -1,7 +1,12 @@
 import dotenv from 'dotenv';
 import { Client } from 'discord.js';
 import { MessageHandler } from './core';
-import { InviteCommand, PlayCommand } from './commands';
+import {
+	InviteCommand,
+	TalkCommand,
+	PlayCommand,
+	SetCommand,
+} from './commands';
 
 dotenv.config();
 
@@ -13,13 +18,14 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
-	const handler = new MessageHandler(message, [
+	const handler = new MessageHandler(client, message, [
 		new InviteCommand(),
+		new TalkCommand(),
 		new PlayCommand(),
+		new SetCommand(),
 	]);
 
-	handler.handle(client);
+	handler.handle();
 });
-// client.on("voiceStateUpdate", (oldMember, newMember) => voiceStateUpdate(oldMember, newMember, client));
 
 client.login();

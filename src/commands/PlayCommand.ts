@@ -1,12 +1,18 @@
-import { Command, Action } from '../core';
+import { Command, DBAudioPlayer } from '../core';
 
 class PlayCommand extends Command {
 	constructor() {
-		super('play <id>', 'Help play');
+		super('play <soundId>', 'help play');
 	}
 
-	action: Action = ({ message }, id) => {
-		message.channel.send(id);
+	action = async ({ message, args }) => {
+        const [soundId] = args;
+
+		const guildId = message.guild.id;
+		const channel = message.member.voice.channel;
+
+		const audioPlay = new DBAudioPlayer(guildId, channel);
+		await audioPlay.speech(soundId);
 	};
 }
 

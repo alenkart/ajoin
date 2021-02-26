@@ -1,4 +1,4 @@
-import { Command } from '../core';
+import { Command, Handler } from '../core';
 import { Sound } from '../models';
 
 class PlayCommand extends Command {
@@ -6,16 +6,12 @@ class PlayCommand extends Command {
 		super('set <soundId> <url>', 'help play');
 	}
 
-	action = async ({ message, args }) => {
+	async action({ message, args }: Handler) {
 		const [soundId, url] = args;
 		const guildId = message.guild.id;
 
-		await Sound.destroy({
-			where: { guildId, soundId },
-		});
-
-		await Sound.create({ guildId, soundId, url });
-	};
+		await Sound.upsert({ guildId, soundId, url }, { returning: false });
+	}
 }
 
 export default PlayCommand;

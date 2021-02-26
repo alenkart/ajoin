@@ -24,20 +24,19 @@ abstract class Command {
 		program
 			.command(this.command)
 			.description(this.description)
-			.action((...args) => {
-
-				console.log(args);
-
-				const command = args.pop();
-				const options = args.pop();
-
-				this.action({ client, message, args, command, options });
+			.action(async (...args) => {
+				try {
+					const command = args.pop();
+					const options = args.pop();
+					await this.action({ client, message, args, command, options });
+				} catch(error) {
+					console.log(error);
+					message.channel.send('Error');
+				}
 			});
 	}
 
-	action: Action = async () => {
-		throw new Error('Unexpected error');
-	};
+	protected abstract action(params: Handler): Promise<any>;
 }
 
 export default Command;

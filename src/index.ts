@@ -1,11 +1,16 @@
 import dotenv from 'dotenv';
+
 import { Client } from 'discord.js';
+
 import { MessageHandler } from './core';
+
 import {
-	InviteCommand,
+	SetCommand,
+	ShowCommand,
 	TalkCommand,
 	PlayCommand,
-	SetCommand,
+	InviteCommand,
+	DeleteCommand,
 } from './commands';
 
 dotenv.config();
@@ -18,12 +23,16 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
-	const handler = new MessageHandler(client, message, [
-		new InviteCommand(),
+	const commnads = [
+		new SetCommand(),
+		new ShowCommand(),
 		new TalkCommand(),
 		new PlayCommand(),
-		new SetCommand(),
-	]);
+		new InviteCommand(),
+		new DeleteCommand(),
+	];
+
+	const handler = new MessageHandler(client, message, commnads);
 
 	handler.handle();
 });

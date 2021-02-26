@@ -1,19 +1,23 @@
 import { VoiceChannel } from 'discord.js';
 
 abstract class AudioPlayer {
-	map = {};
-	maxPlayingTime: number = 5 * 1000;
-	maxAfkTime: number = 30 * 1000;
+	protected map: { [id: string]: NodeJS.Timeout } = {};
+	protected maxPlayingTime: number = 5 * 1000;
+	protected maxAfkTime: number = 30 * 1000;
 
-	guildId: string;
-	channel: VoiceChannel;
+	protected guildId: string;
+	protected channel: VoiceChannel;
 
 	constructor(guildId: string, channel: VoiceChannel) {
 		this.guildId = guildId;
 		this.channel = channel;
 	}
 
-	async play(url: string, volume: number = 0.8) {
+	public abstract play(): Promise<any>;
+
+	// public abstract play: () => Promise<any>;
+
+	protected async playUrl(url: string, volume: number = 0.8) {
 		const connection = await this.channel.join();
 		const dispatcher = connection.play(url, { volume });
 
@@ -25,7 +29,7 @@ abstract class AudioPlayer {
 		this.afk();
 	}
 
-	afk() {
+	protected afk() {
 		//clear the timeout
 		clearTimeout(this.map[this.guildId]);
 

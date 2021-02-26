@@ -1,4 +1,10 @@
-import database from './database';
+import Database from '../core/Database';
 import createSound from './sound';
 
-export const Sound = createSound(database.sequelize);
+const database = new Database();
+
+const Sound = createSound(database.sequelize);
+
+database.start();
+
+export { Sound };

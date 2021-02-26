@@ -6,13 +6,13 @@ class PlayCommand extends Command {
 	}
 
 	action = async ({ message, args }) => {
-        const [soundId] = args;
+		const [soundId] = args;
 
 		const guildId = message.guild.id;
 		const channel = message.member.voice.channel;
 
-		const audioPlay = new DBAudioPlayer(guildId, channel);
-		await audioPlay.speech(soundId);
+		const audioPlayer = new DBAudioPlayer(guildId, channel, soundId);
+		await audioPlayer.play();
 	};
 }
 

@@ -1,14 +1,26 @@
+import { VoiceChannel } from 'discord.js';
 import AudioPlayer from './AudioPlayer';
 import { Sound } from '../models';
 
 class DBAudioPlayer extends AudioPlayer {
-	async speech(soundId: string) {
+	soundId: string;
+
+	constructor(guildId: string, channel: VoiceChannel, soundId: string) {
+		super(guildId, channel);
+		this.soundId = soundId;
+	}
+
+	public async play() {
 		const sound = await Sound.findOne({
-			where: { guildId: this.guildId, soundId },
+			where: { guildId: this.guildId, soundId: this.soundId },
 			raw: true,
 		});
 
-		console.log(sound);
+		if (!sound) {
+			throw new Error(`Sound not found 🔎`);
+		}
+
+		return this.playUrl(sound.url);
 	}
 }
 

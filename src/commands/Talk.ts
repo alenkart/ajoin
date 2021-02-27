@@ -1,6 +1,6 @@
 import { Command, Handler, TextAudioPlayer } from '../core';
 
-class TalkCommand extends Command {
+class Talk extends Command {
 	constructor() {
 		super('talk <text...>', 'help talk');
 	}
@@ -14,4 +14,4 @@ class TalkCommand extends Command {
 	}
 }
 
-export default TalkCommand;
+export default Talk;

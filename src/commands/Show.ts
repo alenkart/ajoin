@@ -3,12 +3,12 @@ import { Sound } from '../models';
 
 const formatSound = (sound) => `🔊 ${sound.soundId} 🔗 ${sound.url}`;
 
-class ShowCommand extends Command {
+class Show extends Command {
 	private messageSize = 1800;
 	private group = 10;
 
 	constructor() {
-		super('show [soundId]', 'help talk');
+		super('show [soundId]', 'help show');
 	}
 
 	async sendByGroup(message, sounds) {
@@ -37,4 +37,4 @@ class ShowCommand extends Command {
 	}
 }
 
-export default ShowCommand;
+export default Show;

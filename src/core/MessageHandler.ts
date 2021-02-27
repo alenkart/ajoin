@@ -14,14 +14,11 @@ class MessageHandler {
 		this.commands = commands;
 	}
 
-	parse() {
-		const args = this.message.content || '';
-		this.program.parse(args.split(' '), { from: 'user' });
-	}
-
-	handleUnknownCommands() {
-		this.program.on('command:*', () => {
-			this.message.channel.send('Unknow command');
+	config() {
+		this.program.exitOverride().configureOutput({
+			writeOut: (str) => console.log('writeOut ==> ', str),
+			writeErr: (str) => console.log('writeErr ==>', str),
+			outputError: (str) => console.log('outputError ==>', str),
 		});
 	}
 
@@ -31,21 +28,22 @@ class MessageHandler {
 		});
 	}
 
-	shouldSkipMessage() {
-		return this.message.author.bot;
+	async parseMessage() {
+		const args = this.message.content.split(' ');
+		await this.program.parseAsync(args, { from: 'user' });
 	}
 
-	handle() {
-		if (this.shouldSkipMessage()) {
+	async handle() {
+		if (this.message.author.bot) {
 			return;
 		}
 
-		this.handleUnknownCommands();
-
 		try {
+			this.config();
 			this.registerCommands();
-			this.parse();
-		} catch (_error) {
+			await this.parseMessage();
+		} catch (error) {
+			console.log(error.message);
 			this.message.channel.send('Error');
 		}
 	}

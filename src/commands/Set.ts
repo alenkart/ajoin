@@ -1,9 +1,9 @@
 import { Command, Handler } from '../core';
 import { Sound } from '../models';
 
-class PlayCommand extends Command {
+class Set extends Command {
 	constructor() {
-		super('set <soundId> <url>', 'help play');
+		super('set <soundId> <url>', 'help set');
 	}
 
 	async action({ message, args }: Handler) {
@@ -14,4 +14,4 @@ class PlayCommand extends Command {
 	}
 }
 
-export default PlayCommand;
+export default Set;

@@ -1,17 +1,7 @@
 import dotenv from 'dotenv';
-
 import { Client } from 'discord.js';
-
-import { MessageHandler } from './core';
-
-import {
-	SetCommand,
-	ShowCommand,
-	TalkCommand,
-	PlayCommand,
-	InviteCommand,
-	DeleteCommand,
-} from './commands';
+import { MessageHandler, VoiceStateUpdate, DBAudioPlayer } from './core';
+import * as commands from './commands';
 
 dotenv.config();
 
@@ -23,18 +13,25 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
-	const commnads = [
-		new SetCommand(),
-		new ShowCommand(),
-		new TalkCommand(),
-		new PlayCommand(),
-		new InviteCommand(),
-		new DeleteCommand(),
-	];
-
-	const handler = new MessageHandler(client, message, commnads);
-
+	const _commands = Object.values(commands).map((Command) => new Command());
+	const handler = new MessageHandler(client, message, _commands);
 	handler.handle();
+});
+
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+	const voiceStateUpdate = new VoiceStateUpdate(client, oldMember, newMember);
+
+	voiceStateUpdate.on('joinChannel', () => {
+		const audioPlayer = new DBAudioPlayer(
+			newMember.guild.id,
+			newMember.channel,
+			`<@!${newMember.id}>`
+		);
+
+		audioPlayer.play();
+	});
+
+	voiceStateUpdate.handle();
 });
 
 client.login();

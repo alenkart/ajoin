@@ -25,14 +25,9 @@ abstract class Command {
 			.command(this.command)
 			.description(this.description)
 			.action(async (...args) => {
-				try {
-					const command = args.pop();
-					const options = args.pop();
-					await this.action({ client, message, args, command, options });
-				} catch(error) {
-					console.log(error);
-					message.channel.send('Error');
-				}
+				const command = args.pop();
+				const options = args.pop();
+				await this.action({ client, message, args, command, options });
 			});
 	}
 

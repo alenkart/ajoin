@@ -1,7 +1,7 @@
 import { Command, Handler } from '../core';
 import { Sound } from '../models';
 
-class DeleteCommand extends Command {
+class Delete extends Command {
 	constructor() {
 		super('delete <soundId>', 'help delete');
 	}
@@ -22,4 +22,4 @@ class DeleteCommand extends Command {
 	}
 }
 
-export default DeleteCommand;
+export default Delete;

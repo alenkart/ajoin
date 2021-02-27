@@ -1,6 +1,6 @@
-export { default as SetCommand } from './SetCommand';
-export { default as TalkCommand } from './TalkCommand';
-export { default as PlayCommand } from './PlayCommand';
-export { default as ShowCommand } from './ShowCommand';
-export { default as InviteCommand } from './InviteCommand';
-export { default as DeleteCommand } from './DeleteCommand';
+export { default as Set } from './Set';
+export { default as Talk } from './Talk';
+export { default as Play } from './Play';
+export { default as Show } from './Show';
+export { default as Invite } from './Invite';
+export { default as Delete } from './Delete';

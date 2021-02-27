@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { VoiceChannel } from 'discord.js';
 
 abstract class AudioPlayer {
@@ -15,9 +16,12 @@ abstract class AudioPlayer {
 
 	public abstract play(): Promise<any>;
 
-	// public abstract play: () => Promise<any>;
-
 	protected async playUrl(url: string, volume: number = 0.8) {
+
+		if (!validator.isURL(url)) {
+			throw new Error("Invalid url");
+		}
+
 		const connection = await this.channel.join();
 		const dispatcher = connection.play(url, { volume });
 

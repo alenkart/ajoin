@@ -6,10 +6,13 @@ class Talk extends Command {
 	}
 
 	async action({ message, args }: Handler) {
-		const guildId = message.guild.id;
-		const channel = message.member.voice.channel;
+		const audioPlayer = new TextAudioPlayer({
+			guildId: message.guild.id,
+			channel: message.member.voice.channel,
+			text: args.join(' '),
+			lang: 'en',
+		});
 
-		const audioPlayer = new TextAudioPlayer(guildId, channel, args.join(' '));
 		await audioPlayer.play();
 	}
 }

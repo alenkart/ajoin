@@ -38,14 +38,9 @@ class MessageHandler {
 			return;
 		}
 
-		try {
-			this.config();
-			this.registerCommands();
-			await this.parseMessage();
-		} catch (error) {
-			console.log(error.message);
-			this.message.channel.send('Error');
-		}
+		this.config();
+		this.registerCommands();
+		await this.parseMessage();
 	}
 }
 

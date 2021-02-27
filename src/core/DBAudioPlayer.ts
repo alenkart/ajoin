@@ -1,11 +1,18 @@
 import { VoiceChannel } from 'discord.js';
+import validator from 'validator';
 import AudioPlayer from './AudioPlayer';
 import { Sound } from '../models';
+
+type DBAudioPlayerConstructor = {
+	guildId: string;
+	channel: VoiceChannel;
+	soundId: string;
+};
 
 class DBAudioPlayer extends AudioPlayer {
 	soundId: string;
 
-	constructor(guildId: string, channel: VoiceChannel, soundId: string) {
+	constructor({ guildId, channel, soundId }: DBAudioPlayerConstructor) {
 		super(guildId, channel);
 		this.soundId = soundId;
 	}
@@ -16,7 +23,7 @@ class DBAudioPlayer extends AudioPlayer {
 			raw: true,
 		});
 
-		if (!sound) {
+		if (!sound?.url) {
 			throw new Error(`Sound not found 🔎`);
 		}
 

@@ -1,3 +1,4 @@
+import validator from 'validator';
 import { Command, Handler } from '../core';
 import { Sound } from '../models';
 
@@ -10,7 +11,15 @@ class Set extends Command {
 		const [soundId, url] = args;
 		const guildId = message.guild.id;
 
-		await Sound.upsert({ guildId, soundId, url }, { returning: false });
+		if (!validator.isURL(url)) {
+			throw new Error("Stop trolling that's not a url");
+		}
+
+		await Sound.destroy({
+			where: { guildId, soundId },
+		});
+
+		await Sound.create({ guildId, soundId, url });
 	}
 }
 

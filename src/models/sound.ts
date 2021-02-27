@@ -19,25 +19,38 @@ class Sound extends Model {
 }
 
 export default (sequelize: Sequelize) => {
-	const config = {
+	const attributes = {
+		id: {
+			type: DataTypes.INTEGER,
+			autoIncrement: true,
+			primaryKey: true,
+		},
 		guildId: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			primaryKey: true,
-		},
-		url: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			primaryKey: true,
-			unique: true,
 		},
 		soundId: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		url: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 	};
 
-	Sound.init(config, { sequelize });
+	const options = {
+		sequelize,
+		indexes: [
+			{
+				name: 'guild_sound_url',
+				fields: ['guildId', 'soundId', 'url'],
+				unique: true,
+			},
+		],
+	};
+
+	Sound.init(attributes, options);
 
 	return Sound;
 };

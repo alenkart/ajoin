@@ -12,23 +12,35 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client?.user?.tag}!`);
 });
 
-client.on('message', (message) => {
+client.on('message', async (message) => {
 	const _commands = Object.values(commands).map((Command) => new Command());
 	const handler = new MessageHandler(client, message, _commands);
-	handler.handle();
+
+	try {
+		await handler.handle();
+	} catch (error) {
+		console.log('message ==>', { error: error.message });
+		message.channel.send('Error');
+	}
 });
 
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	const voiceStateUpdate = new VoiceStateUpdate(client, oldMember, newMember);
 
-	voiceStateUpdate.on('joinChannel', () => {
-		const audioPlayer = new DBAudioPlayer(
-			newMember.guild.id,
-			newMember.channel,
-			`<@!${newMember.id}>`
-		);
+	voiceStateUpdate.on(['joinChannel', 'switchChannel'], async (event) => {
+		console.log('voiceStateUpdate', { event });
 
-		audioPlayer.play();
+		const audioPlayer = new DBAudioPlayer({
+			channel: newMember.channel,
+			guildId: newMember.guild.id,
+			soundId: `<@!${newMember.id}>`,
+		});
+
+		try {
+			await audioPlayer.play();
+		} catch (error) {
+			console.log('voiceStateUpdate ==>', { error: error.message });
+		}
 	});
 
 	voiceStateUpdate.handle();

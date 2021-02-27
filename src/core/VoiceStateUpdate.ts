@@ -1,21 +1,42 @@
 import { VoiceState, Client } from 'discord.js';
 
-type Event =
-	| 'bot'
-	| 'switchChannel'
-	| 'joinChannel'
-	| 'leaveChannel'
-	| 'deaf'
-	| 'undeaf'
-	| 'mute'
-	| 'unmute';
+export type Event = 'switchChannel' | 'joinChannel' | 'leaveChannel';
+
+export type Params = {
+	client: Client;
+	oldVoiceState: VoiceState;
+	newVoiceState: VoiceState;
+};
+
+export type handler = (params: Params) => Event | void;
+
+export type eventCallback = (event: Event) => void;
+
+export const joinChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	return !oldVoiceState.channelID && newVoiceState.channelID
+		? 'joinChannel'
+		: null;
+};
+
+export const leaveChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	return oldVoiceState.channelID && !newVoiceState.channelID
+		? 'leaveChannel'
+		: null;
+};
+
+export const switchChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	const exists = oldVoiceState.channelID && oldVoiceState.channelID;
+	const diff = oldVoiceState.channelID !== newVoiceState.channelID;
+	return exists && diff ? 'switchChannel' : null;
+};
 
 class VoiceStateUpdate {
 	private client: Client;
 	private oldVoiceState: VoiceState;
 	private newVoiceState: VoiceState;
 
-	private map: { [id: string]: () => void };
+	private map: { [id: string]: eventCallback };
+	private handlers: handler[] = [joinChannel, leaveChannel, switchChannel];
 
 	constructor(
 		client: Client,
@@ -29,34 +50,34 @@ class VoiceStateUpdate {
 	}
 
 	private execute(event: Event) {
-		this.map[event]?.();
+		this.map[event]?.(event);
 	}
 
-	on(event: Event, callback: () => void) {
-		this.map[event] = callback;
+	on(events: Event | Event[], callback: eventCallback) {
+		events = events instanceof Array ? events : [events];
+
+		events.map((event) => {
+			this.map[event] = callback;
+		});
 	}
 
 	handle() {
-		const newVoice = this.newVoiceState;
-		const oldVoice = this.oldVoiceState;
-
 		if (this.newVoiceState.id === this.client.user.id) {
-			this.execute('bot');
-		} else {
-			if (!oldVoice.channelID && newVoice.channelID) {
-				this.execute('joinChannel');
-			} else if (oldVoice.channelID && !newVoice.channelID) {
-				this.execute('leaveChannel');
-			} else if (oldVoice.channelID !== newVoice.channelID) {
-				this.execute('switchChannel');
-			} else if (!oldVoice.selfDeaf && newVoice.selfDeaf) {
-				this.execute('deaf');
-			} else if (oldVoice.selfDeaf && !newVoice.selfDeaf) {
-				this.execute('undeaf');
-			} else if (!oldVoice.selfMute && newVoice.selfMute) {
-				this.execute('mute');
-			} else if (oldVoice.selfMute && !newVoice.selfMute) {
-				this.execute('unmute');
+			return;
+		}
+
+		const params = {
+			client: this.client,
+			oldVoiceState: this.oldVoiceState,
+			newVoiceState: this.newVoiceState,
+		};
+
+		for (let handler of this.handlers) {
+			const event = handler(params);
+
+			if (event) {
+				this.execute(event);
+				return;
 			}
 		}
 	}

@@ -2,16 +2,18 @@ import { VoiceChannel } from 'discord.js';
 import { getAudioUrl } from 'google-tts-api';
 import AudioPlayer from './AudioPlayer';
 
+type TextAudioPlayerConstructor = {
+	guildId: string;
+	channel: VoiceChannel;
+	text: string;
+	lang: string;
+};
+
 class TextAudioPlayer extends AudioPlayer {
 	text: string;
 	lang: string;
 
-	constructor(
-		guildId: string,
-		channel: VoiceChannel,
-		text: string,
-		lang: string = 'en'
-	) {
+	constructor({ guildId, channel, text, lang }: TextAudioPlayerConstructor) {
 		super(guildId, channel);
 		this.text = text;
 		this.lang = lang;

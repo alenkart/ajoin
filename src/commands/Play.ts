@@ -1,4 +1,4 @@
-import { Command, Handler, DBAudioPlayer } from '../core';
+import { Command, Handler, DBAudio, AudioPlayer } from '../core';
 
 class Play extends Command {
 	constructor() {
@@ -8,13 +8,13 @@ class Play extends Command {
 	async action({ message, args }: Handler) {
 		const [soundId] = args;
 
-		const audioPlayer = new DBAudioPlayer({
+		const audio = new DBAudio({
 			guildId: message.guild.id,
 			channel: message.member.voice.channel,
 			soundId,
 		});
 
-		await audioPlayer.play();
+		await AudioPlayer.instance.push(audio);
 	}
 }
 

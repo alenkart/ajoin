@@ -1,23 +1,22 @@
 import { VoiceChannel } from 'discord.js';
-import validator from 'validator';
-import AudioPlayer from './AudioPlayer';
+import Audio from './Audio';
 import { Sound } from '../models';
 
-type DBAudioPlayerConstructor = {
+type DBAudioConstructor = {
 	guildId: string;
 	channel: VoiceChannel;
 	soundId: string;
 };
 
-class DBAudioPlayer extends AudioPlayer {
+class DBAudio extends Audio {
 	soundId: string;
 
-	constructor({ guildId, channel, soundId }: DBAudioPlayerConstructor) {
+	constructor({ guildId, channel, soundId }: DBAudioConstructor) {
 		super(guildId, channel);
 		this.soundId = soundId;
 	}
 
-	public async play() {
+	public async getURL() {
 		const sound = await Sound.findOne({
 			where: { guildId: this.guildId, soundId: this.soundId },
 			raw: true,
@@ -27,8 +26,8 @@ class DBAudioPlayer extends AudioPlayer {
 			throw new Error(`Sound not found 🔎`);
 		}
 
-		return this.playUrl(sound.url);
+		return sound.url;
 	}
 }
 
-export default DBAudioPlayer;
+export default DBAudio;

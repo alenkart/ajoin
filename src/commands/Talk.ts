@@ -1,4 +1,4 @@
-import { Command, Handler, TextAudioPlayer } from '../core';
+import { Command, Handler, TextAudio, AudioPlayer } from '../core';
 
 class Talk extends Command {
 	constructor() {
@@ -6,14 +6,14 @@ class Talk extends Command {
 	}
 
 	async action({ message, args }: Handler) {
-		const audioPlayer = new TextAudioPlayer({
+		const audio = new TextAudio({
 			guildId: message.guild.id,
 			channel: message.member.voice.channel,
 			text: args.join(' '),
 			lang: 'en',
 		});
 
-		await audioPlayer.play();
+		await AudioPlayer.instance.push(audio);
 	}
 }
 

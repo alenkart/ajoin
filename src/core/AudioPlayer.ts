@@ -1,47 +1,51 @@
-import validator from 'validator';
-import { VoiceChannel } from 'discord.js';
+import Audio from './Audio';
+import DBAudio from './DBAudio';
+import TextAudio from './TextAudio';
 
-abstract class AudioPlayer {
-	protected map: { [id: string]: NodeJS.Timeout } = {};
-	protected maxPlayingTime: number = 5 * 1000;
-	protected maxAfkTime: number = 30 * 1000;
+const debug = (queue: Audio[]) => {
+	const result = queue.map((audio) => {
+		if (audio instanceof DBAudio) {
+			return audio.soundId;
+		} else if (audio instanceof TextAudio) {
+			return audio.text;
+		}
+	});
 
-	protected guildId: string;
-	protected channel: VoiceChannel;
+	console.log(result);
+};
 
-	constructor(guildId: string, channel: VoiceChannel) {
-		this.guildId = guildId;
-		this.channel = channel;
-	}
+class AudioPlayer {
+	static readonly instance: AudioPlayer = new AudioPlayer();
 
-	public abstract play(): Promise<any>;
+	readonly queue: Audio[] = [];
 
-	protected async playUrl(url: string, volume: number = 0.8) {
+	public async push(audio: Audio) {
+		this.queue.push(audio);
 
-		if (!validator.isURL(url)) {
-			throw new Error("Invalid url");
+		if (this.queue.length === 1) {
+			this.play(audio);
 		}
 
-		const connection = await this.channel.join();
-		const dispatcher = connection.play(url, { volume });
-
-		//sound limit time
-		setTimeout(() => {
-			dispatcher.destroy();
-		}, this.maxPlayingTime);
-
-		this.afk();
+		debug(this.queue);
 	}
 
-	protected afk() {
-		//clear the timeout
-		clearTimeout(this.map[this.guildId]);
+	private async play(audio: Audio) {
+		const url = await audio.getURL();
 
-		//create the timeout
-		this.map[this.guildId] = setTimeout(() => {
-			delete this.map[this.guildId];
-			this.channel.leave();
-		}, this.maxAfkTime);
+		const connection = await audio.channel.join();
+		const dispatcher = connection.play(url, { volume: 0.7 });
+
+		dispatcher.once('finish', () => {
+			//remove the current audio
+			this.queue.shift();
+
+			//get the next audio in the queue
+			const nextAudio = this.queue.shift();
+
+			if (nextAudio) {
+				this.play(nextAudio);
+			}
+		});
 	}
 }
 

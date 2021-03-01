@@ -1,32 +1,32 @@
 import { VoiceChannel } from 'discord.js';
 import { getAudioUrl } from 'google-tts-api';
-import AudioPlayer from './AudioPlayer';
+import Audio from './Audio';
 
-type TextAudioPlayerConstructor = {
+type TextAudioConstructor = {
 	guildId: string;
 	channel: VoiceChannel;
 	text: string;
 	lang: string;
 };
 
-class TextAudioPlayer extends AudioPlayer {
+class TextAudio extends Audio {
 	text: string;
 	lang: string;
 
-	constructor({ guildId, channel, text, lang }: TextAudioPlayerConstructor) {
+	constructor({ guildId, channel, text, lang }: TextAudioConstructor) {
 		super(guildId, channel);
 		this.text = text;
 		this.lang = lang;
 	}
 
-	public async play() {
+	public async getURL() {
 		const url = await getAudioUrl(this.text, {
 			lang: this.lang == 'en' ? 'en-US' : 'es-ES',
 			slow: false,
 		});
 
-		await this.playUrl(url);
+		return url;
 	}
 }
 
-export default TextAudioPlayer;
+export default TextAudio;

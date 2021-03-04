@@ -1,7 +1,7 @@
 import * as commander from 'commander';
 import { Client, Message } from 'discord.js';
 
-export type Handler = {
+export type ActionParams = {
 	message: Message;
 	client: Client;
 	args: any[];
@@ -9,29 +9,18 @@ export type Handler = {
 	command: commander.Command;
 };
 
-export type Action = (params: Handler) => void;
+export type Action = (params: ActionParams) => void;
 
 abstract class Command {
-	command: string;
+	name: string;
 	description: string;
 
-	constructor(command, description) {
-		this.command = command;
+	constructor(name, description) {
+		this.name = name;
 		this.description = description;
 	}
 
-	register(program: commander.Command, client: Client, message: Message) {
-		program
-			.command(this.command)
-			.description(this.description)
-			.action(async (...args) => {
-				const command = args.pop();
-				const options = args.pop();
-				await this.action({ client, message, args, command, options });
-			});
-	}
-
-	protected abstract action(params: Handler): Promise<any>;
+	abstract action(params: ActionParams): Promise<any>;
 }
 
 export default Command;

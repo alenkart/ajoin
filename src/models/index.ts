@@ -1,4 +1,4 @@
-import Database from '../core/Database';
+import Database from './Database';
 import createSound from './sound';
 
 const database = new Database();

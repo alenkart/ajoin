@@ -1,7 +1,14 @@
-import { Command, Handler } from '../core';
+import { Command, ActionParams } from '../core';
 import { Sound } from '../models';
 
-const formatSound = (sound) => `🔊 ${sound.soundId} 🔗 ${sound.url}`;
+const formatSound = (sound) => {
+	const content = [
+		`🔊 ${sound.soundId}`,
+		`🧝 ${sound.author}`,
+		`🔗 ${sound.url}`,
+	];
+	return content.join('\n');
+};
 
 class Show extends Command {
 	private messageSize = 1800;
@@ -19,12 +26,12 @@ class Show extends Command {
 		});
 
 		for (let i = 0; i <= groups.length; i += this.group) {
-			const payload = groups.slice(i, i + this.group).join('\n');
+			const payload = groups.slice(i, i + this.group).join('\n\n');
 			await message.channel.send(payload);
 		}
 	}
 
-	async action({ message, args }: Handler) {
+	async action({ message, args }: ActionParams) {
 		const [soundId] = args;
 
 		const sounds = await Sound.fetchBy(message.guild.id, soundId);

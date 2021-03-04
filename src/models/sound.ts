@@ -37,6 +37,10 @@ export default (sequelize: Sequelize) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		author: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 	};
 
 	const options = {

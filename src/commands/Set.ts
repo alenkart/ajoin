@@ -1,5 +1,5 @@
 import validator from 'validator';
-import { Command, Handler } from '../core';
+import { ActionParams, Command } from '../core/index';
 import { Sound } from '../models';
 
 class Set extends Command {
@@ -7,9 +7,10 @@ class Set extends Command {
 		super('set <soundId> <url>', 'help set');
 	}
 
-	async action({ message, args }: Handler) {
+	async action({ message, args }: ActionParams) {
 		const [soundId, url] = args;
 		const guildId = message.guild.id;
+		const author = message.member.user.tag;
 
 		if (!validator.isURL(url)) {
 			throw new Error("Stop trolling that's not a url");
@@ -19,7 +20,7 @@ class Set extends Command {
 			where: { guildId, soundId },
 		});
 
-		await Sound.create({ guildId, soundId, url });
+		await Sound.create({ guildId, soundId, url, author });
 	}
 }
 

@@ -1,4 +1,4 @@
-import { Command, Handler } from '../core';
+import { Command, ActionParams } from '../core';
 import { Sound } from '../models';
 
 class Delete extends Command {
@@ -6,7 +6,7 @@ class Delete extends Command {
 		super('delete <soundId>', 'help delete');
 	}
 
-	async action({ message, args }: Handler) {
+	async action({ message, args }: ActionParams) {
 		const [soundId] = args;
 
 		const guildId = message.guild.id;

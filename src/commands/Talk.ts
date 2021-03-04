@@ -1,11 +1,11 @@
-import { Command, Handler, TextAudio, AudioPlayer } from '../core';
+import { Command, ActionParams, TextAudio, AudioPlayer } from '../core';
 
 class Talk extends Command {
 	constructor() {
 		super('talk <text...>', 'help talk');
 	}
 
-	async action({ message, args }: Handler) {
+	async action({ message, args }: ActionParams) {
 		const audio = new TextAudio({
 			guildId: message.guild.id,
 			channel: message.member.voice.channel,

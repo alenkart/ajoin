@@ -23,27 +23,29 @@ class AudioPlayer {
 		this.queue.push(audio);
 
 		if (this.queue.length === 1) {
-			this.play(audio);
+			await this.play(audio);
 		}
 
 		debug(this.queue);
 	}
 
 	private async play(audio: Audio) {
+		//get the audio url
 		const url = await audio.getURL();
 
+		//play the audio
 		const connection = await audio.channel.join();
 		const dispatcher = connection.play(url, { volume: 0.7 });
 
-		dispatcher.once('finish', () => {
+		dispatcher.once('finish', async () => {
 			//remove the current audio
 			this.queue.shift();
 
 			//get the next audio in the queue
-			const nextAudio = this.queue.shift();
+			const nextAudio = this.queue[0];
 
 			if (nextAudio) {
-				this.play(nextAudio);
+				await this.play(nextAudio);
 			}
 		});
 	}

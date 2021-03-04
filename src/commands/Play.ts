@@ -1,11 +1,11 @@
-import { Command, Handler, DBAudio, AudioPlayer } from '../core';
+import { Command, ActionParams, DBAudio, AudioPlayer } from '../core';
 
 class Play extends Command {
 	constructor() {
 		super('play <soundId>', 'help play');
 	}
 
-	async action({ message, args }: Handler) {
+	async action({ message, args }: ActionParams) {
 		const [soundId] = args;
 
 		const audio = new DBAudio({

@@ -2,35 +2,15 @@ import { VoiceState, Client } from 'discord.js';
 
 export type Event = 'switchChannel' | 'joinChannel' | 'leaveChannel';
 
-export type Params = {
+export type handler = (params: {
 	client: Client;
 	oldVoiceState: VoiceState;
 	newVoiceState: VoiceState;
-};
-
-export type handler = (params: Params) => Event | void;
+}) => Event | void;
 
 export type eventCallback = (event: Event) => void;
 
-export const joinChannel: handler = ({ oldVoiceState, newVoiceState }) => {
-	return !oldVoiceState.channelID && newVoiceState.channelID
-		? 'joinChannel'
-		: null;
-};
-
-export const leaveChannel: handler = ({ oldVoiceState, newVoiceState }) => {
-	return oldVoiceState.channelID && !newVoiceState.channelID
-		? 'leaveChannel'
-		: null;
-};
-
-export const switchChannel: handler = ({ oldVoiceState, newVoiceState }) => {
-	const exists = oldVoiceState.channelID && oldVoiceState.channelID;
-	const diff = oldVoiceState.channelID !== newVoiceState.channelID;
-	return exists && diff ? 'switchChannel' : null;
-};
-
-class VoiceStateUpdate {
+export default class VoiceStateUpdateEvent {
 	private client: Client;
 	private oldVoiceState: VoiceState;
 	private newVoiceState: VoiceState;
@@ -76,11 +56,27 @@ class VoiceStateUpdate {
 			const event = handler(params);
 
 			if (event) {
-				this.execute(event);
-				return;
+				return this.execute(event);
 			}
 		}
 	}
 }
 
-export default VoiceStateUpdate;
+export const joinChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	const diff = !oldVoiceState.channelID && newVoiceState.channelID;
+
+	return diff ? 'joinChannel' : null;
+};
+
+export const leaveChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	const delta = oldVoiceState.channelID && !newVoiceState.channelID;
+
+	return delta ? 'leaveChannel' : null;
+};
+
+export const switchChannel: handler = ({ oldVoiceState, newVoiceState }) => {
+	const exists = oldVoiceState.channelID && oldVoiceState.channelID;
+	const delta = oldVoiceState.channelID !== newVoiceState.channelID;
+
+	return exists && delta ? 'switchChannel' : null;
+};

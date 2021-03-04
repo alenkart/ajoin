@@ -11,5 +11,10 @@
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
-	}
+		"sourceMap": true,
+		"baseUrl": ".",
+
+		"pretty": true
+	},
+	"include": ["src"]
 }

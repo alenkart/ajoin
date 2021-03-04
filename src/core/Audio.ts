@@ -14,6 +14,8 @@ abstract class Audio {
 	}
 
 	public abstract getURL(): Promise<string>;
+
+	public abstract toString(): string;
 }
 
 export default Audio;

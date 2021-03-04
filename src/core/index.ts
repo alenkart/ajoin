@@ -1,7 +1,18 @@
-export { default as Command, Handler } from './Command';
-export { default as MessageHandler } from './MessageHandler';
-export { default as TextAudio } from './TextAudio';
-export { default as DBAudio } from './DBAudio';
-export { default as Database } from './Database';
-export { default as VoiceStateUpdate } from './VoiceStateUpdate';
-export { default as AudioPlayer } from './AudioPlayer';
+
+import Database from '../models/Database';
+import Command, { ActionParams } from './Command';
+
+import Audio from './Audio';
+import AudioPlayer from './AudioPlayer';
+import DBAudio from './DBAudio';
+import TextAudio from './TextAudio';
+
+export {
+	Command,
+	Database,
+	Audio,
+	AudioPlayer,
+	DBAudio,
+	TextAudio,
+	ActionParams,
+};

@@ -1,4 +1,4 @@
-import { Command, Handler } from '../core';
+import { Command, ActionParams } from '../core';
 
 const getLink = (clientId) => {
 	return `https://discordapp.com/oauth2/authorize?client_id=${clientId}&scope=bot&permissions=8`;
@@ -6,10 +6,10 @@ const getLink = (clientId) => {
 
 class InviteCommand extends Command {
 	constructor() {
-		super('invite', 'invite');
+		super('invite', 'help invite');
 	}
 
-	async action({ message, client }: Handler) {
+	async action({ message, client }: ActionParams) {
 		const { user } = client;
 
 		const url = getLink(user.id);

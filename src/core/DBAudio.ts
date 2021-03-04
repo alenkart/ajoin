@@ -28,6 +28,10 @@ class DBAudio extends Audio {
 
 		return sound.url;
 	}
+
+	public toString(): string {
+		return this.soundId;
+	}
 }
 
 export default DBAudio;

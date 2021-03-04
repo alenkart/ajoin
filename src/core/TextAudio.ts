@@ -27,6 +27,10 @@ class TextAudio extends Audio {
 
 		return url;
 	}
+
+	public toString(): string {
+		return this.text.substring(0, 20);
+	}
 }
 
 export default TextAudio;

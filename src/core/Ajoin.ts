@@ -44,7 +44,7 @@ class Ajoin extends Client {
 				newMember
 			);
 
-			voiceStateUpdate.on(['joinChannel', 'switchChannel'], async (event) => {
+			voiceStateUpdate.on(['joinChannel', 'switchChannel'], async () => {
 				const audio = new DBAudio({
 					channel: newMember.channel,
 					guildId: newMember.guild.id,
@@ -66,7 +66,7 @@ class Ajoin extends Client {
 		this.events();
 		this.messaagEvent();
 		this.voiceStateUpdateEvent();
-		await super.login(process.env.DISCORD_TOKEN);
+		await super.login();
 	}
 }
 

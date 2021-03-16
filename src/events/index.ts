@@ -1,7 +1,2 @@
-import MessageEvent from './MessageEvent';
-import VoiceStateUpdateEvent from './VoiceStateUpdateEvent';
-
-export {
-    MessageEvent,
-    VoiceStateUpdateEvent
-}
+export { default as MessageEvent } from "./MessageEvent";
+export { default as VoiceStateUpdateEvent } from "./VoiceStateUpdateEvent";

@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import Ajoin from './core/Ajoin';
+import dotenv from "dotenv";
+import Ajoin from "./core/Ajoin";
 
 dotenv.config();
 

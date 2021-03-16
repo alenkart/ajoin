@@ -29,7 +29,7 @@ class Ajoin extends Client {
       try {
         await handler.handle();
       } catch (error) {
-        console.log("message ==>", { error: error.message }, error);
+        console.log("message ==>", { error: error.message });
         message.channel.send("Error");
       }
     });

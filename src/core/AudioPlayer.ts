@@ -1,17 +1,5 @@
 import Audio from "./Audio";
-import { DBAudio, TextAudio } from "../audios";
-
-const debug = (queue: Audio[]) => {
-  const result = queue.map((audio) => {
-    if (audio instanceof DBAudio) {
-      return audio.soundId;
-    } else if (audio instanceof TextAudio) {
-      return audio.text;
-    }
-  });
-
-  console.log(result);
-};
+import AudioDispacher from "./AudioDispacher";
 
 class AudioPlayer {
   static readonly instance: AudioPlayer = new AudioPlayer();
@@ -19,34 +7,38 @@ class AudioPlayer {
   readonly queue: Audio[] = [];
 
   public async push(audio: Audio) {
+    if (this.queue.length > 5) {
+      throw new Error("Queue is full");
+    }
+
     this.queue.push(audio);
 
     if (this.queue.length === 1) {
       await this.play(audio);
     }
+  }
 
-    debug(this.queue);
+  private async playNext() {
+    this.queue.shift();
+
+    const nextAudio = this.queue[0];
+
+    if (nextAudio) {
+      await this.play(nextAudio);
+    }
   }
 
   private async play(audio: Audio) {
-    //get the audio url
-    const url = await audio.getURL();
+    try {
+      const dispatcher = await audio.play(0.7);
 
-    //play the audio
-    const connection = await audio.channel.join();
-    const dispatcher = connection.play(url, { volume: 0.7 });
-
-    dispatcher.once("finish", async () => {
-      //remove the current audio
-      this.queue.shift();
-
-      //get the next audio in the queue
-      const nextAudio = this.queue[0];
-
-      if (nextAudio) {
-        await this.play(nextAudio);
-      }
-    });
+      const manager = new AudioDispacher(dispatcher);
+      await manager.handle();
+    } catch (error) {
+      console.log(audio.toString(), error.message);
+    } finally {
+      this.playNext();
+    }
   }
 }
 

@@ -1,8 +1,4 @@
-import { Command, ActionParams, AudioPlayer, Audio } from "../core/index";
-
-const formatAudio = (audio: Audio) => {
-  return `${audio}`;
-};
+import { Command, ActionParams, AudioPlayer } from "../core/index";
 
 class Queue extends Command {
   constructor() {
@@ -10,7 +6,14 @@ class Queue extends Command {
   }
 
   async action({ message }: ActionParams) {
-    const msg = AudioPlayer.instance.queue.map(formatAudio);
+    if (AudioPlayer.instance.queue.length < 1) {
+      message.channel.send("The queue is empty, please feed me 😭");
+      return;
+    }
+
+    const msg = AudioPlayer.instance.queue.map(
+      (audio, index) => `${index + 1} - ${audio}`
+    );
 
     message.channel.send(msg);
   }

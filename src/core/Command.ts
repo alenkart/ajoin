@@ -22,7 +22,11 @@ abstract class Command {
 
   abstract action(params: ActionParams): Promise<any>;
 
-  command(
+  preBuild(_: commander.Command) {}
+
+  postBuild(_: commander.Command) {}
+
+  build(
     program: commander.Command,
     message: discord.Message,
     client: discord.Client
@@ -31,17 +35,29 @@ abstract class Command {
       .command(this.name)
       .description(this.description)
       .action(async (...args) => {
-        const program = args.pop();
+        args.pop();
         const options = args.pop();
 
-        await this.action({
+        const params = {
           client,
           message,
           args,
           options,
           program,
-        });
+        };
+
+        await this.action(params);
       });
+  }
+
+  command(
+    program: commander.Command,
+    message: discord.Message,
+    client: discord.Client
+  ) {
+    this.preBuild(program);
+    this.build(program, message, client);
+    this.postBuild(program);
   }
 }
 

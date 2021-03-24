@@ -1,4 +1,3 @@
-import config from "../config.json";
 import { Client } from "discord.js";
 import { DBAudio } from "../audios";
 import AudioPlayer from "./AudioPlayer";
@@ -6,6 +5,7 @@ import { MessageEvent, VoiceStateUpdateEvent } from "../events";
 import * as commands from "../commands";
 
 class Ajoin extends Client {
+  
   events() {
     this.once("ready", () => {
       console.log(`Environment: ${process.env.NODE_ENV}`);
@@ -24,7 +24,7 @@ class Ajoin extends Client {
   messaagEvent() {
     this.on("message", async (message) => {
       const _commands = Object.values(commands).map((Current) => new Current());
-      const handler = new MessageEvent(this, config.prefix, message, _commands);
+      const handler = new MessageEvent(this, message, _commands);
 
       try {
         await handler.handle();

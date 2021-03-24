@@ -1,21 +1,19 @@
+import config from "../config.json";
 import * as commander from "commander";
 import discord from "discord.js";
 import { Command, Event } from "../core";
 
 class MessageEvent extends Event {
-  private prefix: string;
   private program: commander.Command;
   private message: discord.Message;
   private commands: Command[] = [];
 
   constructor(
     client: discord.Client,
-    prefix: string,
     message: discord.Message,
     commands: Command[]
   ) {
     super(client);
-    this.prefix = prefix;
     this.program = new commander.Command();
     this.message = message;
     this.commands = commands;
@@ -29,20 +27,22 @@ class MessageEvent extends Event {
     });
   }
 
-  addCommands() {
+  buildCommands() {
     for (let command of this.commands) {
       command.command(this.program, this.message, this.client);
     }
   }
 
   async parseMessage() {
-    const args = this.message.content.substring(this.prefix.length).split(" ");
+    const args = this.message.content
+      .substring(config.prefix.length)
+      .split(" ");
     await this.program.parseAsync(args, { from: "user" });
   }
 
   shouldSkipMessaage() {
     const isBot = this.message.author.bot;
-    const hasPrefix = this.message.content.startsWith(this.prefix);
+    const hasPrefix = this.message.content.startsWith(config.prefix);
     return isBot || !hasPrefix;
   }
 
@@ -52,7 +52,7 @@ class MessageEvent extends Event {
     }
 
     this.config();
-    this.addCommands();
+    this.buildCommands();
     await this.parseMessage();
   }
 }

@@ -1,15 +1,6 @@
 import { Command, ActionParams } from "../core";
 import { Sound } from "../models";
 
-const formatSound = (sound) => {
-  const content = [
-    `🔊 ${sound.soundId}`,
-    `🧝 ${sound.author}`,
-    `🔗 ${sound.url}`,
-  ];
-  return content.join("\n");
-};
-
 class Show extends Command {
   private messageSize = 1800;
   private group = 10;
@@ -18,15 +9,16 @@ class Show extends Command {
     super("show [soundId]", "Show all the users details");
   }
 
+  formatSound(sound) {
+    const header = `> ${sound.soundId} - \`${sound.author}\``;
+    return [header, sound.url].join("\n").substring(0, this.messageSize);
+  }
+
   async sendByGroup(message, sounds) {
-    const sizePerGroup = this.messageSize / this.group;
-
-    const groups = sounds.map((sound) => {
-      return formatSound(sound).slice(0, sizePerGroup);
-    });
-
-    for (let i = 0; i <= groups.length; i += this.group) {
-      const payload = groups.slice(i, i + this.group).join("\n\n");
+    for (let i = 0; i <= sounds.length; i += this.group) {
+      const payload = sounds
+        .slice(i, i + this.group)
+        .map((sound) => this.formatSound(sound));
       await message.channel.send(payload);
     }
   }

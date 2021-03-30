@@ -2,16 +2,17 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "allowJs": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    // "strict": true,
+    "paths": {
+      "@ajoin/*": ["src/*"]
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "pretty": true
-  },
-  "include": ["src"]
+    "esModuleInterop": true
+  }
+  // "exclude": ["node_modules"]
 }

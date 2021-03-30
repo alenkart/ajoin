@@ -1,39 +1,10 @@
-import config from "../config.json";
-import commander from "commander";
-import { Command, ActionParams } from "../core";
+import { Command, CommandParams } from "@ajoin/core";
 
-const formatCommnad = (command: commander.Command) => {
-  return {
-    value: "```" + `${config.prefix}${command.name()}` + "```",
-    name: command.description(),
-  };
-};
+export class Help extends Command {
+  command = "help [name]";
+  describe = "help command";
 
-type Commander = {
-  parent: { commands: commander.Command[] };
-} & commander.Command;
-
-class Help extends Command {
-  constructor() {
-    super("help [command]", "Display the commands help");
-  }
-
-  async action({ message, program }: ActionParams) {
-    const fields = (program as Commander).parent.commands.map(formatCommnad);
-
-    const embed = {
-      color: 0x0099ff,
-      title: "Help",
-      description: "The `sound_name` can be a word or user mention `@AJoin`",
-      fields,
-      timestamp: new Date(),
-      footer: {
-        text: `Version: ${config.version}`,
-      },
-    };
-
-    message.channel.send({ embed });
+  run({ message }: CommandParams): void {
+    message.channel.send("help");
   }
 }
-
-export default Help;

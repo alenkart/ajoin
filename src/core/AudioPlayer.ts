@@ -1,7 +1,7 @@
-import Audio from "./Audio";
-import AudioDispacher from "./AudioDispacher";
+import { Audio } from "./Audio";
+import { AudioDispacher } from "./AudioDispacher";
 
-class AudioPlayer {
+export class AudioPlayer {
   static readonly instance: AudioPlayer = new AudioPlayer();
 
   readonly queue: Audio[] = [];
@@ -41,5 +41,3 @@ class AudioPlayer {
     }
   }
 }
-
-export default AudioPlayer;

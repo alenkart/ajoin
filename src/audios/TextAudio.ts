@@ -1,20 +1,17 @@
-import { VoiceChannel } from "discord.js";
 import { getAudioUrl } from "google-tts-api";
-import { Audio } from "../core";
+import { Audio, AudioConstructor } from "@ajoin/core";
 
 type TextAudioConstructor = {
-  guildId: string;
-  channel: VoiceChannel;
   text: string;
   lang: string;
-};
+} & AudioConstructor;
 
-class TextAudio extends Audio {
+export class TextAudio extends Audio {
   text: string;
   lang: string;
 
   constructor({ guildId, channel, text, lang }: TextAudioConstructor) {
-    super(guildId, channel);
+    super({ guildId, channel });
     this.text = text;
     this.lang = lang;
   }
@@ -32,5 +29,3 @@ class TextAudio extends Audio {
     return this.text.substring(0, 20);
   }
 }
-
-export default TextAudio;

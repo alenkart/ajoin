@@ -1,27 +1,20 @@
 import validator from "validator";
-import { ActionParams, Command } from "../core";
-import { Sound } from "../models";
+import { Command, CommandParams } from "@ajoin/core";
+import { Sound } from "@ajoin/models";
 
-class Set extends Command {
-  constructor() {
-    super("set <soundId> <url>", "Create or update a sound");
-  }
+export class Set extends Command {
+  command = "set <soundId> <url>";
+  describe = "Create or update a sound";
 
-  async action({ message, args }: ActionParams) {
+  async run({ message, args }: CommandParams): Promise<void> {
     const [soundId, url] = args;
-    const guildId = message.guild.id;
-    const author = message.member.user.tag;
+    const guildId = message.guild!.id;
+    const author = message.member!.user.tag;
 
     if (!validator.isURL(url)) {
       throw new Error("Stop trolling that's not a url");
     }
 
-    await Sound.destroy({
-      where: { guildId, soundId },
-    });
-
-    await Sound.create({ guildId, soundId, url, author });
+    await Sound.replace({ soundId, guildId, author, url });
   }
 }
-
-export default Set;

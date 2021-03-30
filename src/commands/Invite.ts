@@ -1,18 +1,15 @@
-import { Command, ActionParams } from "../core";
+import { Command, CommandParams } from "@ajoin/core";
 
-const getLink = (clientId) => {
+const getLink = (clientId: string) => {
   return `https://discordapp.com/oauth2/authorize?client_id=${clientId}&scope=bot&permissions=8`;
 };
 
-class Invite extends Command {
-  constructor() {
-    super("invite", "Shows a link to invite the bot to a server");
-  }
+export class Invite extends Command {
+  command = "invite";
+  describe = "Shows a link to invite the bot to a server";
 
-  async action({ message, client }: ActionParams) {
-    const { user } = client;
-
-    const url = getLink(user.id);
+  run({ message }: CommandParams): void {
+    const url = getLink(this.client!.user!.id);
 
     const embed = {
       url,
@@ -24,5 +21,3 @@ class Invite extends Command {
     message.channel.send({ embed });
   }
 }
-
-export default Invite;

@@ -1,15 +1,14 @@
-import { Command, ActionParams, AudioPlayer } from "../core";
-import { TextAudio } from "../audios";
+import { Command, CommandParams, AudioPlayer } from "@ajoin/core";
+import { TextAudio } from "@ajoin/audios";
 
-class Talk extends Command {
-  constructor() {
-    super("talk <text...>", "Speaks the message");
-  }
+export class Talk extends Command {
+  command = "talk <text...>";
+  describe = "Speaks the message";
 
-  async action({ message, args }: ActionParams) {
+  async run({ message, args }: CommandParams): Promise<void> {
     const audio = new TextAudio({
-      guildId: message.guild.id,
-      channel: message.member.voice.channel,
+      guildId: message.guild!.id,
+      channel: message.member!.voice!.channel!,
       text: args.join(" "),
       lang: "en",
     });
@@ -17,5 +16,3 @@ class Talk extends Command {
     await AudioPlayer.instance.push(audio);
   }
 }
-
-export default Talk;

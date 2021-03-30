@@ -1,11 +1,17 @@
 import { VoiceChannel } from "discord.js";
 
-abstract class Audio {
-  protected timeout;
+export type AudioConstructor = {
+  guildId: string;
+  channel: VoiceChannel;
+  timeout?: number;
+}
+
+export abstract class Audio {
+  timeout: number;
   guildId: string;
   channel: VoiceChannel;
 
-  constructor(guildId: string, channel: VoiceChannel, timeout: number = 5000) {
+  constructor({ guildId, channel, timeout = 5000 }: AudioConstructor) {
     this.guildId = guildId;
     this.channel = channel;
     this.timeout = timeout;
@@ -28,5 +34,3 @@ abstract class Audio {
     return dispatcher;
   }
 }
-
-export default Audio;

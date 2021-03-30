@@ -1,64 +1,44 @@
-import * as commander from "commander";
 import discord from "discord.js";
+import commander from "commander";
 
-export type ActionParams = {
+export type CommandParams = {
+  args: string[];
+  opts: { [key: string]: any };
   message: discord.Message;
-  client: discord.Client;
-  args: any[];
-  options: {};
-  program: commander.Command;
 };
 
-export type Action = (params: ActionParams) => void;
+export abstract class Command {
+  abstract command: string;
+  abstract describe: string;
+  options?: string[];
+  client: discord.Client;
 
-abstract class Command {
-  name: string;
-  description: string;
-
-  constructor(name, description) {
-    this.name = name;
-    this.description = description;
+  constructor(client: discord.Client) {
+    this.client = client;
   }
 
-  abstract action(params: ActionParams): Promise<any>;
-
-  preBuild(_: commander.Command) {}
-
-  postBuild(_: commander.Command) {}
-
-  build(
-    program: commander.Command,
-    message: discord.Message,
-    client: discord.Client
-  ) {
-    program
-      .command(this.name)
-      .description(this.description)
-      .action(async (...args) => {
-        args.pop();
-        const options = args.pop();
-
-        const params = {
-          client,
-          message,
-          args,
-          options,
-          program,
-        };
-
-        await this.action(params);
-      });
-  }
-
-  command(
-    program: commander.Command,
-    message: discord.Message,
-    client: discord.Client
-  ) {
-    this.preBuild(program);
-    this.build(program, message, client);
-    this.postBuild(program);
-  }
+  abstract run(params: CommandParams): void;
 }
 
-export default Command;
+export class CommandBuilder {
+  protected program: commander.Command;
+
+  constructor(program: commander.Command) {
+    this.program = program;
+  }
+
+  build(command: Command, message: discord.Message) {
+    const program = this.program.command(command.command);
+
+    program.action(async (...args) => {
+      args.pop();
+      const opts = args.pop();
+
+      await command.run({ message, args, opts });
+    });
+
+    for (let option of command.options || []) {
+      program.option(option);
+    }
+  }
+}

@@ -1,11 +1,10 @@
-import { Command, ActionParams, AudioPlayer } from "../core/index";
+import { Command, CommandParams, AudioPlayer } from "@ajoin/core";
 
-class Queue extends Command {
-  constructor() {
-    super("queue", "help talk");
-  }
+export class Queue extends Command {
+  command = "queue";
+  describe = "help talk";
 
-  async action({ message }: ActionParams) {
+  run({ message }: CommandParams): void {
     if (AudioPlayer.instance.queue.length < 1) {
       message.channel.send("The queue is empty, please feed me 😭");
       return;
@@ -18,5 +17,3 @@ class Queue extends Command {
     message.channel.send(msg);
   }
 }
-
-export default Queue;

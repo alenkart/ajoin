@@ -1,11 +1,11 @@
 import { Model, Sequelize, DataTypes } from "sequelize";
 
-export default class Sound extends Model {
+export class Sound extends Model {
   static async fetchBy(guildId: string, soundId?: string) {
-    let where = { guildId };
+    let where: Record<string, any> = { guildId };
 
     if (soundId) {
-      where["soundId"] = soundId;
+      where.soundId = soundId;
     }
 
     const sounds = await this.findAll({
@@ -15,6 +15,19 @@ export default class Sound extends Model {
     });
 
     return sounds;
+  }
+
+  static async replace(fields: {
+    guildId: string;
+    soundId: string;
+    url: string;
+    author: string;
+  }) {
+    await this.destroy({
+      where: { guildId: fields.guildId, soundId: fields.soundId },
+    });
+
+    await this.create(fields);
   }
 }
 
@@ -43,18 +56,9 @@ export const createSound = (sequelize: Sequelize) => {
     },
   };
 
-  const options = {
+  Sound.init(attributes, {
     sequelize,
-    indexes: [
-      {
-        name: "guild_sound_url",
-        fields: ["guildId", "soundId", "url"],
-        unique: true,
-      },
-    ],
-  };
-
-  Sound.init(attributes, options);
+  });
 
   return Sound;
 };

@@ -1,32 +1,7 @@
 import { Sequelize } from "sequelize";
 
-class Database {
-  sequelize: Sequelize;
-
-  constructor() {
-    this.sequelize =
-      process.env.NODE_ENV === "production"
-        ? this.proConnection()
-        : this.devConnection();
-  }
-
-  proConnection(): Sequelize {
-    return new Sequelize(process.env.DATABASE_URL, {
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
-      },
-    });
-  }
-
-  devConnection(): Sequelize {
-    return new Sequelize({
-      dialect: "sqlite",
-      storage: "db.sqlite3",
-    });
-  }
+export class Database {
+  sequelize = getConnection();
 
   async start() {
     try {
@@ -39,4 +14,26 @@ class Database {
   }
 }
 
-export default Database;
+function getConnection() {
+  return process.env.NODE_ENV === "production" ? postgres() : sqllite();
+}
+
+function sqllite(): Sequelize {
+  return new Sequelize({
+    dialect: "sqlite",
+    storage: "db.sqlite",
+  });
+}
+
+function postgres(): Sequelize {
+  const config = {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  };
+
+  return new Sequelize(process.env.DATABASE_URL, config);
+}

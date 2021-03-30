@@ -1,15 +1,14 @@
-import { Command, ActionParams } from "../core";
-import { Sound } from "../models";
+import { Command, CommandParams } from "@ajoin/core";
+import { Sound } from "@ajoin/models";
 
-class Delete extends Command {
-  constructor() {
-    super("delete <soundId>", "Delete a sound");
-  }
+export class Delete extends Command {
+  command = "delete <soundId>";
+  describe = "Delete a sound";
 
-  async action({ message, args }: ActionParams) {
+  async run({ message, args }: CommandParams): Promise<void> {
     const [soundId] = args;
 
-    const guildId = message.guild.id;
+    const guildId = message.guild!.id;
 
     await Sound.destroy({
       where: {
@@ -21,5 +20,3 @@ class Delete extends Command {
     message.channel.send(`It's super effective 💀`);
   }
 }
-
-export default Delete;

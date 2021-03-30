@@ -7,7 +7,7 @@ export class AudioDispacher {
     this.dispatcher = dispatcher;
   }
 
-  handle() {
+  dispatch() {
     return new Promise<void>((resolve, reject) => {
       this.dispatcher.once("finish", () => resolve());
       this.dispatcher.once("error", (error) => reject(error));

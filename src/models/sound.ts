@@ -1,7 +1,7 @@
 import { Model, Sequelize, DataTypes } from "sequelize";
 
 export class Sound extends Model {
-  static async fetchBy(guildId: string, soundId?: string) {
+  static async findByGuildId(guildId: string, soundId?: string) {
     let where: Record<string, any> = { guildId };
 
     if (soundId) {

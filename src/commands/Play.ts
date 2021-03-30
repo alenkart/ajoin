@@ -11,8 +11,8 @@ export class Play extends Command {
     const audio = new DBAudio({
       soundId,
       ranking: true,
-      guildId: message.guild!.id,
-      channel: message.member!.voice!.channel!,
+      guildId: message.guild.id,
+      channel: message.member.voice.channel,
     });
 
     await AudioPlayer.instance.push(audio);

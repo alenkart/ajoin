@@ -10,6 +10,7 @@ export type CommandParams = {
 export abstract class Command {
   abstract command: string;
   abstract describe: string;
+  aliases?: string[];
   options?: string[];
   client: discord.Client;
 
@@ -36,6 +37,8 @@ export class CommandBuilder {
 
       await command.run({ message, args, opts });
     });
+
+    program.aliases(command.aliases);
 
     for (let option of command.options || []) {
       program.option(option);

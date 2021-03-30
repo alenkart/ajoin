@@ -1,4 +1,5 @@
 export * from './Ajoin';
+export * from './Error'
 export * from './Event';
 export * from './Command';
 export * from './Database';

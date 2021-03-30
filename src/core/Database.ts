@@ -21,7 +21,7 @@ function getConnection() {
 function sqllite(): Sequelize {
   return new Sequelize({
     dialect: "sqlite",
-    storage: "db.sqlite",
+    storage: "db.sqlite3",
   });
 }
 

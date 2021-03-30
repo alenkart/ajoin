@@ -4,10 +4,11 @@ import { AudioDispacher } from "./AudioDispacher";
 export class AudioPlayer {
   static readonly instance: AudioPlayer = new AudioPlayer();
 
+  readonly size: number = 5
   readonly queue: Audio[] = [];
 
   public async push(audio: Audio) {
-    if (this.queue.length > 5) {
+    if (this.queue.length > this.size) {
       throw new Error("Queue is full");
     }
 
@@ -29,13 +30,12 @@ export class AudioPlayer {
   }
 
   private async play(audio: Audio) {
+
     try {
       const dispatcher = await audio.play(0.7);
 
       const manager = new AudioDispacher(dispatcher);
-      await manager.handle();
-    } catch (error) {
-      console.log(audio.toString(), error.message);
+      await manager.dispatch();
     } finally {
       this.playNext();
     }

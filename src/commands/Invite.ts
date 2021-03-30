@@ -9,7 +9,7 @@ export class Invite extends Command {
   describe = "Shows a link to invite the bot to a server";
 
   run({ message }: CommandParams): void {
-    const url = getLink(this.client!.user!.id);
+    const url = getLink(this.client.user.id);
 
     const embed = {
       url,

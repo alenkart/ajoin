@@ -27,7 +27,7 @@ export class Show extends Command {
   async run({ message, args }: CommandParams): Promise<void> {
     const [soundId] = args;
 
-    const sounds = await Sound.fetchBy(message!.guild!.id, soundId);
+    const sounds = await Sound.findByGuildId(message.guild.id, soundId);
 
     if (sounds.length < 1) {
       throw new Error("I found nothing");

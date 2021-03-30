@@ -10,10 +10,16 @@ export class Queue extends Command {
       return;
     }
 
-    const msg = AudioPlayer.instance.queue.map(
-      (audio, index) => `${index + 1} - ${audio}`
-    );
+    const { queue, size } = AudioPlayer.instance;
 
-    message.channel.send(msg);
+    const result = [`List of audios in queue ${queue.length}/${size}`];
+
+    for (let index = 0; index < queue.length; index++) {
+      const audio = queue[index];
+
+      result.push(`${index + 1} - ${audio}`);
+    }
+
+    message.channel.send(result);
   }
 }

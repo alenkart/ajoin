@@ -8,7 +8,7 @@ export class Delete extends Command {
   async run({ message, args }: CommandParams): Promise<void> {
     const [soundId] = args;
 
-    const guildId = message.guild!.id;
+    const guildId = message.guild.id;
 
     await Sound.destroy({
       where: {

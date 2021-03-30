@@ -5,14 +5,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": "./",
-    // "strict": true,
     "paths": {
       "@ajoin/*": ["src/*"]
     },
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
   }
-  // "exclude": ["node_modules"]
 }

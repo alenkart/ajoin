@@ -1,14 +1,16 @@
 import { getAudioUrl } from "google-tts-api";
 import { Audio, AudioConstructor } from "@ajoin/core";
 
+type Lang = "en" | "es" | "ja" | "fr";
+
 type TextAudioConstructor = {
   text: string;
-  lang: string;
+  lang: Lang;
 } & AudioConstructor;
 
 export class TextAudio extends Audio {
   text: string;
-  lang: string;
+  lang: Lang;
 
   constructor({ guildId, channel, text, lang }: TextAudioConstructor) {
     super({ guildId, channel });
@@ -18,7 +20,7 @@ export class TextAudio extends Audio {
 
   public async getURL() {
     const url = await getAudioUrl(this.text, {
-      lang: this.lang == "en" ? "en-US" : "es-ES",
+      lang: this.lang,
       slow: false,
     });
 

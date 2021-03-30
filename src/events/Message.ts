@@ -1,22 +1,20 @@
-import discord from "discord.js";
+import discord, { DiscordAPIError } from "discord.js";
 import commander from "commander";
-import { Event, CommandBuilder } from "@ajoin/core";
+import { Event, CommandBuilder, DisplayableError } from "@ajoin/core";
 import * as commands from "@ajoin/commands";
 
 export class Message extends Event<"message"> {
+  prefix = "$";
+
   constructor(client: discord.Client) {
     super("message", client);
   }
 
   ignore(message: discord.Message): boolean {
-    return message.author.bot;
+    return message.author.bot || !message.content.startsWith(this.prefix);
   }
 
   async listen(message: discord.Message) {
-    if (message.author.bot) {
-      return;
-    }
-
     const program = new commander.Command();
 
     program.exitOverride().configureOutput({
@@ -28,16 +26,21 @@ export class Message extends Event<"message"> {
     const builder = new CommandBuilder(program);
 
     for (let Command of Object.values(commands)) {
-      const command = new Command(this.client)
+      const command = new Command(this.client);
       builder.build(command, message);
-      
+
       console.log(`Command: ${command.command}`);
     }
 
     try {
-      const content = message.content.split(" ");
+      const content = message.content.substring(this.prefix.length).split(" ");
       await program.parseAsync(content, { from: "user" });
     } catch (error) {
+      if (error instanceof DiscordAPIError) {
+        message.channel.send(error.message);
+        return;
+      }
+
       console.log(error);
       message.channel.send("Error");
     }

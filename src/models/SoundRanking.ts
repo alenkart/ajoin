@@ -1,26 +1,26 @@
 import { Model, Sequelize, DataTypes, Op } from "sequelize";
 import { Sound } from "./";
 
-function createAtRange() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth();
-
-  var start = new Date(year, month, 1);
-  var end = new Date(year, month + 1, 0);
-
-  return {
-    [Op.gte]: start,
-    [Op.lte]: end,
-  };
-}
-
 export class SoundRanking extends Model {
+  static createAtRange() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    var start = new Date(year, month, 1);
+    var end = new Date(year, month + 1, 0);
+
+    return {
+      [Op.gte]: start,
+      [Op.lte]: end,
+    };
+  }
+
   static async findBySoundId(soundId: number) {
     const result = await this.findOne({
       where: {
         soundId,
-        createdAt: createAtRange(),
+        createdAt: this.createAtRange(),
       },
     });
 
@@ -34,7 +34,7 @@ export class SoundRanking extends Model {
       limit: top,
       order: [["counter", "desc"]],
       where: {
-        createdAt: createAtRange(),
+        createdAt: this.createAtRange(),
       },
       include: {
         model: Sound,
@@ -42,17 +42,6 @@ export class SoundRanking extends Model {
     });
 
     return result;
-  }
-
-  static async getMonthlyRanking(soundId?: number) {
-    const ranking = await this.findOne({
-      where: {
-        soundId,
-        createdAt: createAtRange(),
-      },
-    });
-
-    return ranking;
   }
 
   static async incrementRanking(soundId: number) {
@@ -77,6 +66,7 @@ export const createSoundRanking = (sequelize: Sequelize) => {
     counter: {
       type: DataTypes.INTEGER,
       defaultValue: 1,
+      allowNull: false,
     },
   };
 

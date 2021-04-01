@@ -1,5 +1,5 @@
 import discord from "discord.js";
-import { Command, CommandParams } from "@ajoin/core";
+import { Command, CommandParams, DisplayableError } from "@ajoin/core";
 import { SoundRanking } from "@ajoin/models";
 
 const getMedal = (place: number): string => {
@@ -20,14 +20,13 @@ export class Ranking extends Command {
     const ranking = (await SoundRanking.findTop(top)) as any[];
 
     if (ranking.length < 1) {
-      message.channel.send("You play sounds I do the raking, deal?");
-      return;
+      throw new DisplayableError("You play sounds I do the raking, deal?");
     }
 
     const embed = new discord.MessageEmbed();
 
     embed
-      .setColor(0x0099ff)
+      .setColor(0x674ea7)
       .setDescription(`Top ${top} of most played sounds this month`);
 
     for (let index = 0; index < ranking.length; index++) {

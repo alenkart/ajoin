@@ -1,4 +1,9 @@
-import { Command, CommandParams, AudioPlayer } from "@ajoin/core";
+import {
+  Command,
+  CommandParams,
+  AudioPlayer,
+  DisplayableError,
+} from "@ajoin/core";
 
 export class Queue extends Command {
   command = "queue";
@@ -6,8 +11,7 @@ export class Queue extends Command {
 
   run({ message }: CommandParams): void {
     if (AudioPlayer.instance.queue.length < 1) {
-      message.channel.send("The queue is empty, please feed me 😭");
-      return;
+      throw new DisplayableError("The queue is empty, please feed me 😭");
     }
 
     const { queue, size } = AudioPlayer.instance;

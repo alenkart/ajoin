@@ -1,5 +1,5 @@
 import * as discord from "discord.js";
-import { Command, CommandParams } from "@ajoin/core";
+import { Command, CommandParams, DisplayableError } from "@ajoin/core";
 import { Sound } from "@ajoin/models";
 
 export class Show extends Command {
@@ -30,7 +30,7 @@ export class Show extends Command {
     const sounds = await Sound.findByGuildId(message.guild.id, soundId);
 
     if (sounds.length < 1) {
-      throw new Error("I found nothing");
+      throw new DisplayableError("I found nothing");
     }
 
     await this.sendByGroup(message, sounds);

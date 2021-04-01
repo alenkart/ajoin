@@ -4,7 +4,7 @@ import { AudioDispacher } from "./AudioDispacher";
 export class AudioPlayer {
   static readonly instance: AudioPlayer = new AudioPlayer();
 
-  readonly size: number = 5
+  readonly size: number = 5;
   readonly queue: Audio[] = [];
 
   public async push(audio: Audio) {
@@ -30,13 +30,13 @@ export class AudioPlayer {
   }
 
   private async play(audio: Audio) {
-
     try {
       const dispatcher = await audio.play(0.7);
 
       const manager = new AudioDispacher(dispatcher);
       await manager.dispatch();
     } finally {
+      console.log("wttf");
       this.playNext();
     }
   }

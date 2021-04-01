@@ -1,3 +1,4 @@
+import { MessageEmbed } from "discord.js";
 import { Command, CommandParams } from "@ajoin/core";
 
 const getLink = (clientId: string) => {
@@ -11,13 +12,14 @@ export class Invite extends Command {
   run({ message }: CommandParams): void {
     const url = getLink(this.client.user.id);
 
-    const embed = {
-      url,
-      color: 0x0099ff,
-      title: "Invite AJoin 🎉",
-      description: "Click on the above link and level up!",
-    };
+    const embed = new MessageEmbed();
 
-    message.channel.send({ embed });
+    embed
+      .setColor(0x674ea7)
+      .setTitle("Invite AJoin 🎉")
+      .setDescription("Click on the above link and level up!")
+      .setURL(url);
+
+    message.channel.send(embed);
   }
 }

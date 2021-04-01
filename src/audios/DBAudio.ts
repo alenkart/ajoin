@@ -1,5 +1,5 @@
 import { VoiceChannel } from "discord.js";
-import { Audio, AudioConstructor } from "@ajoin/core";
+import { Audio, AudioConstructor, DisplayableError } from "@ajoin/core";
 import { Sound, SoundRanking } from "@ajoin/models";
 
 type DBAudioConstructor = {
@@ -31,7 +31,7 @@ export class DBAudio extends Audio {
     })) as any;
 
     if (!sound?.url) {
-      throw new Error(`Sound not found 🔎`);
+      throw new DisplayableError(`Sound not found 🔎`);
     }
 
     if (this.ranking) {

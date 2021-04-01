@@ -12,7 +12,7 @@ export class Help extends Command {
 
     embed
       .setTitle("Here is the help!!")
-      .setColor(0x0099ff)
+      .setColor(0x674ea7)
       .setDescription(
         "The `sound_name` can be a word or user mention `@AJoin`"
       );

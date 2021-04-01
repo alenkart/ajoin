@@ -1,4 +1,4 @@
-import discord, { DiscordAPIError } from "discord.js";
+import discord from "discord.js";
 import commander from "commander";
 import { Event, CommandBuilder, DisplayableError } from "@ajoin/core";
 import * as commands from "@ajoin/commands";
@@ -36,13 +36,13 @@ export class Message extends Event<"message"> {
       const content = message.content.substring(this.prefix.length).split(" ");
       await program.parseAsync(content, { from: "user" });
     } catch (error) {
-      if (error instanceof DiscordAPIError) {
+      if (error instanceof DisplayableError) {
         message.channel.send(error.message);
         return;
       }
 
       console.log(error);
-      message.channel.send("Error");
+      message.channel.send("A Wild Error Appears!");
     }
   }
 }

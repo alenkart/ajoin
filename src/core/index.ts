@@ -6,4 +6,4 @@ export * from './Database';
 
 export * from './Audio';
 export * from './AudioPlayer'
-export * from './AudioDispacher';
+export * from './AudioDispatcher';

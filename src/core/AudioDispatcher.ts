@@ -1,6 +1,6 @@
 import { StreamDispatcher } from "discord.js";
 
-export class AudioDispacher {
+export class AudioDispatcher {
   private dispatcher: StreamDispatcher;
 
   constructor(dispatcher: StreamDispatcher) {

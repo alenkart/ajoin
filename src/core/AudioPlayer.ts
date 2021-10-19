@@ -1,5 +1,5 @@
 import { Audio } from "./Audio";
-import { AudioDispacher } from "./AudioDispacher";
+import { AudioDispatcher } from "./AudioDispatcher";
 
 export class AudioPlayer {
   static readonly instance: AudioPlayer = new AudioPlayer();
@@ -33,10 +33,9 @@ export class AudioPlayer {
     try {
       const dispatcher = await audio.play(0.7);
 
-      const manager = new AudioDispacher(dispatcher);
+      const manager = new AudioDispatcher(dispatcher);
       await manager.dispatch();
     } finally {
-      console.log("wttf");
       this.playNext();
     }
   }

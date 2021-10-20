@@ -6,8 +6,6 @@ import { Sound } from "./entities/Sound";
 
 dotenv.config();
 
-
-
 async function test() {
   try {
     const db = new TypeOrmDatabase();

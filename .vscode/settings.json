@@ -6,5 +6,11 @@
             "database": "${workspaceFolder:aj}/db.sqlite3",
             "name": "d"
         }
+    ],
+    "cSpell.words": [
+        "ajoin",
+        "Ajoin",
+        "respawn",
+        "typeorm"
     ]
 }

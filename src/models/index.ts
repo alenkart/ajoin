@@ -9,6 +9,6 @@ const SoundRanking = createSoundRanking(database.sequelize);
 
 SoundRanking.belongsTo(Sound, { foreignKey: "soundId" });
 
-database.start();
+// database.start();
 
 export { Sound, SoundRanking };

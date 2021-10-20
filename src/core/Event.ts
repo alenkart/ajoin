@@ -4,20 +4,20 @@ export type EventTypes = keyof discord.ClientEvents;
 
 export type EventParams<T extends EventTypes> = discord.ClientEvents[T];
 
-export abstract class Event<T extends EventTypes> {
+export abstract class Event {
   event: EventTypes;
   client: discord.Client;
 
-  constructor(event: T, client: discord.Client) {
+  constructor(event: EventTypes, client: discord.Client) {
     this.event = event;
     this.client = client;
   }
 
-  abstract listen(...args: EventParams<T>): void;
+  abstract listen(...args: any[]): void;
 
-  abstract ignore(...args: EventParams<T>): boolean;
+  abstract ignore(...args: any[]): boolean;
 
-  handle(...args: EventParams<T>) {
+  handle(...args: any[]) {
     if (this.ignore(...args)) {
       return;
     }

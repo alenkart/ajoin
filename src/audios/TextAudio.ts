@@ -3,10 +3,10 @@ import { Audio, AudioConstructor } from "@ajoin/core";
 
 type Lang = "en" | "es" | "ja" | "fr";
 
-type TextAudioConstructor = {
+interface TextAudioConstructor extends AudioConstructor {
   text: string;
   lang: Lang;
-} & AudioConstructor;
+}
 
 export class TextAudio extends Audio {
   text: string;

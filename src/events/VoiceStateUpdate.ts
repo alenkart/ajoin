@@ -7,7 +7,7 @@ export type StateMatcher = (
   next: discord.VoiceState
 ) => boolean;
 
-export class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
+export class VoiceStateUpdate extends Event {
   matchers: StateMatcher[] = [joinChannel, switchChannel];
 
   constructor(client: discord.Client) {

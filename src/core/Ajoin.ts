@@ -7,9 +7,10 @@ export class Ajoin {
   listen() {
     for (let Event of Object.values(events)) {
       const event = new Event(this.client);
-      this.client.on(event.event, async (...args) => {
-        await event.handle(...args);
-      });
+      this.client.on(
+        event.event,
+        async (...args) => await event.handle(...args)
+      );
 
       console.log(`Event: ${event.event}`);
     }

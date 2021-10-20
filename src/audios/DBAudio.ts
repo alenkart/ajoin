@@ -2,12 +2,12 @@ import { VoiceChannel } from "discord.js";
 import { Audio, AudioConstructor, DisplayableError } from "@ajoin/core";
 import { Sound, SoundRanking } from "@ajoin/models";
 
-type DBAudioConstructor = {
+interface DBAudioConstructor extends AudioConstructor {
   guildId: string;
   channel: VoiceChannel;
   soundId: string;
   ranking?: boolean;
-} & AudioConstructor;
+}
 
 export class DBAudio extends Audio {
   soundId: string;

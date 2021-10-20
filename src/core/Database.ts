@@ -1,4 +1,54 @@
 import { Sequelize } from "sequelize";
+import { getConnectionManager, createConnections, Connection } from "typeorm";
+
+export abstract class IDatabase<T> {
+  abstract devConnection(): Promise<void>;
+  abstract proConnection(): Promise<void>;
+  abstract getConnection(): Promise<T>;
+
+  async connect() {
+    console.log(process.env.NODE_ENV );
+    if (process.env.NODE_ENV === "production") {
+      this.proConnection();
+    } else {
+      this.devConnection();
+    }
+  }
+}
+
+export class TypeOrmDatabase extends IDatabase<Connection> {
+  connectionManager = getConnectionManager();
+
+  async devConnection(): Promise<void> {
+    await createConnections([
+      {
+        type: "sqlite",
+        database: "db1.sqlite3",
+        logging: false,
+        synchronize: true,
+        entities: ["*/entities/*.{js,ts}"],
+      },
+    ]);
+  }
+
+  async proConnection() {
+
+    await createConnections([
+      {
+        type: "postgres",
+        url: process.env.DATABASE_URL,
+        entities: ["src/entities/**/*.ts"],
+      },
+    ]);
+
+    // const connection = this.connectionManager.create();
+    // await connection.connect();
+  }
+
+  async getConnection() {
+    return this.connectionManager.get();
+  }
+}
 
 export class Database {
   sequelize = getConnection();

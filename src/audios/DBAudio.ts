@@ -1,6 +1,6 @@
 import { VoiceChannel } from "discord.js";
 import { Audio, AudioConstructor, DisplayableError } from "@ajoin/core";
-import { Sound, SoundRanking } from "@ajoin/models";
+import { Sound } from "@ajoin/entities";
 
 interface DBAudioConstructor extends AudioConstructor {
   guildId: string;
@@ -25,18 +25,15 @@ export class DBAudio extends Audio {
   }
 
   public async getURL() {
-    const sound = (await Sound.findOne({
-      where: { guildId: this.guildId, soundId: this.soundId },
-      raw: true,
-    })) as any;
+    const sound = await Sound.findByGuildIdAndName(this.guildId, this.soundId);
 
     if (!sound?.url) {
       throw new DisplayableError(`Sound not found 🔎`);
     }
 
-    if (this.ranking) {
-      SoundRanking.incrementRanking(sound.id);
-    }
+    // if (this.ranking) {
+    //   SoundRanking.incrementRanking(sound.id);
+    // }
 
     return sound.url;
   }

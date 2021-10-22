@@ -1,6 +1,6 @@
 import validator from "validator";
 import { Command, CommandParams, DisplayableError } from "@ajoin/core";
-import { Sound } from "@ajoin/models";
+import { Sound } from "@ajoin/entities";
 
 export class Set extends Command {
   command = "set <soundId> <url>";

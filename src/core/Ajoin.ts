@@ -9,7 +9,7 @@ export class Ajoin {
       const event = new Event(this.client);
       this.client.on(
         event.event,
-        async (...args) => await event.handle(...args)
+        async (...args) => await event.handle(...args as any)
       );
 
       console.log(`Event: ${event.event}`);

@@ -1,5 +1,5 @@
 import { Command, CommandParams } from "@ajoin/core";
-import { Sound } from "@ajoin/models";
+import { Sound } from "@ajoin/entities";
 
 export class Delete extends Command {
   command = "delete <soundId>";
@@ -10,11 +10,9 @@ export class Delete extends Command {
 
     const guildId = message.guild.id;
 
-    await Sound.destroy({
-      where: {
-        guildId,
-        soundId,
-      },
+    await Sound.delete({
+      guildId,
+      soundId,
     });
 
     message.channel.send(`It's super effective 💀`);

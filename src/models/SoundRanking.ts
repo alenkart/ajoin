@@ -1,5 +1,5 @@
 import { Model, Sequelize, DataTypes, Op } from "sequelize";
-import { Sound } from "./";
+// import { Sound } from "./";
 
 export class SoundRanking extends Model {
   static createAtRange() {
@@ -37,7 +37,7 @@ export class SoundRanking extends Model {
         createdAt: this.createAtRange(),
       },
       include: {
-        model: Sound,
+        // model: Sound,
       },
     });
 

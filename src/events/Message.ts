@@ -3,7 +3,7 @@ import commander from "commander";
 import { Event, CommandBuilder, DisplayableError } from "@ajoin/core";
 import * as commands from "@ajoin/commands";
 
-export class Message extends Event {
+export class Message extends Event<"message"> {
   prefix = "$";
 
   constructor(client: discord.Client) {

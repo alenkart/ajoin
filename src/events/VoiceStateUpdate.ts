@@ -2,27 +2,26 @@ import discord from "discord.js";
 import { Event, AudioPlayer } from "@ajoin/core";
 import { DBAudio } from "@ajoin/audios";
 
-export type StateMatcher = (
+type StateMatcher = (
   old: discord.VoiceState,
   next: discord.VoiceState
 ) => boolean;
 
-export class VoiceStateUpdate extends Event {
+export class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
   matchers: StateMatcher[] = [joinChannel, switchChannel];
 
   constructor(client: discord.Client) {
     super("voiceStateUpdate", client);
   }
 
-  ignore(old: discord.VoiceState, next: discord.VoiceState): boolean {
+  ignore(old, next: discord.VoiceState): boolean {
     //is the bot
     if (next.id === this.client.user?.id) {
       return true;
     }
 
     //is not a match
-    const isMatch = this.matchers.find((marcher) => marcher(old, next));
-    return !isMatch;
+    return !this.matchers.find((marcher) => marcher(old, next));
   }
 
   async listen(_, next: discord.VoiceState) {
@@ -36,19 +35,13 @@ export class VoiceStateUpdate extends Event {
   }
 }
 
-const joinChannel: StateMatcher = (
-  old: discord.VoiceState,
-  next: discord.VoiceState
-): boolean => {
+const joinChannel: StateMatcher = (old, next): boolean => {
   return !old.channelID && !!next.channelID;
 };
 
-const switchChannel: StateMatcher = (
-  old: discord.VoiceState,
-  next: discord.VoiceState
-): boolean => {
+const switchChannel: StateMatcher = (old, next): boolean => {
   const exists = old.channelID && next.channelID;
-  const delta = old.channelID !== next.channelID;
+  const diff = old.channelID !== next.channelID;
 
-  return exists && delta;
+  return exists && diff;
 };

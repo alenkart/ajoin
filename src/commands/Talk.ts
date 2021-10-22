@@ -7,13 +7,13 @@ export class Talk extends Command {
   options = ["-es", "-en", "-ja", "-fr"];
 
   async run({ message, args, opts }: CommandParams): Promise<void> {
-    const [first] = Object.keys(opts).map((opt) => opt.toLowerCase());
+    const [lang] = Object.keys(opts).map((opt) => opt.toLowerCase());
 
     const audio = new TextAudio({
       guildId: message.guild.id,
       channel: message.member.voice.channel,
       text: args.join(" "),
-      lang: first as any,
+      lang: lang as any,
     });
 
     await AudioPlayer.instance.push(audio);

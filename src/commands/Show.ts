@@ -1,23 +1,23 @@
 import * as discord from "discord.js";
 import { Command, CommandParams, DisplayableError } from "@ajoin/core";
-import { Sound } from "@ajoin/models";
+import { Sound } from "@ajoin/entities";
 
 export class Show extends Command {
+  private static messageSize = 1800;
+  private static group = 10;
+
   command = "show [soundId]";
   describe = "Show all the users details";
 
-  private messageSize = 1800;
-  private group = 10;
-
-  formatSound(sound: any) {
+  formatSound(sound: Sound) {
     const header = `🧝 \`${sound.author}\` 🔉 ${sound.soundId}`;
-    return [header, `${sound.url}`].join("\n").substring(0, this.messageSize);
+    return [header, `${sound.url}`].join("\n").substring(0, Show.messageSize);
   }
 
   async sendByGroup(message: discord.Message, sounds: any[]) {
-    for (let i = 0; i <= sounds.length; i += this.group) {
+    for (let i = 0; i <= sounds.length; i += Show.group) {
       const payload = sounds
-        .slice(i, i + this.group)
+        .slice(i, i + Show.group)
         .map((sound) => this.formatSound(sound));
 
       await message.channel.send(payload);
@@ -25,9 +25,11 @@ export class Show extends Command {
   }
 
   async run({ message, args }: CommandParams): Promise<void> {
-    const [soundId] = args;
+    const [name] = args;
 
-    const sounds = await Sound.findByGuildId(message.guild.id, soundId);
+    const sounds: Sound[] = name
+      ? [await Sound.findByGuildIdAndName(message.guild.id, name)]
+      : await Sound.findByGuildId(message.guild.id);
 
     if (sounds.length < 1) {
       throw new DisplayableError("I found nothing");

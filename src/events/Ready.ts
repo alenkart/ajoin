@@ -1,7 +1,7 @@
 import discord from "discord.js";
 import { Event } from "@ajoin/core";
 
-export class Ready extends Event {
+export class Ready extends Event<"ready"> {
   constructor(client: discord.Client) {
     super("ready", client);
   }

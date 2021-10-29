@@ -10,7 +10,7 @@ export class Show extends Command {
   describe = "Show all the users details";
 
   formatSound(sound: Sound) {
-    const header = `🧝 \`${sound.author}\` 🔉 ${sound.soundId}`;
+    const header = `🔉 ${sound.soundId} 🧝 \`${sound.author}\``;
     return [header, `${sound.url}`].join("\n").substring(0, Show.messageSize);
   }
 
@@ -28,7 +28,7 @@ export class Show extends Command {
     const [name] = args;
 
     const sounds: Sound[] = name
-      ? [await Sound.findByGuildIdAndName(message.guild.id, name)]
+      ? [await Sound.findByGuildIdAndSoundId(message.guild.id, name)]
       : await Sound.findByGuildId(message.guild.id);
 
     if (sounds.length < 1) {

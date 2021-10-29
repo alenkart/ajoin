@@ -2,6 +2,7 @@ export * from './Ajoin';
 export * from './Error'
 export * from './Event';
 export * from './Command';
+export * from './CommandBuilder';
 export * from './Database';
 
 export * from './Audio';

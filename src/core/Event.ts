@@ -13,15 +13,15 @@ export abstract class Event<T extends EventTypes> {
     this.client = client;
   }
 
-  abstract listen(...args: EventParams<T>): void;
+  abstract listen(...args: EventParams<T>): Promise<void>;
 
-  abstract ignore(...args: EventParams<T>): boolean;
+  abstract ignore(...args: EventParams<T>): Promise<boolean>;
 
-  handle(...args: EventParams<T>) {
-    if (this.ignore(...args)) {
+  async handle(...args: EventParams<T>) {
+    if (await this.ignore(...args)) {
       return;
     }
 
-    this.listen(...args);
+    await this.listen(...args);
   }
 }

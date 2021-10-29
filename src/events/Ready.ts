@@ -6,9 +6,11 @@ export class Ready extends Event<"ready"> {
     super("ready", client);
   }
 
-  ignore = () => false;
+  async ignore() {
+    return false;
+  }
 
-  listen() {
+  async listen() {
     console.log("Ajoin is ready", this.client.user?.tag);
   }
 }

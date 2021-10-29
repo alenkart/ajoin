@@ -25,7 +25,10 @@ export class DBAudio extends Audio {
   }
 
   public async getURL() {
-    const sound = await Sound.findByGuildIdAndName(this.guildId, this.soundId);
+    const sound = await Sound.findByGuildIdAndSoundId(
+      this.guildId,
+      this.soundId
+    );
 
     if (!sound?.url) {
       throw new DisplayableError(`Sound not found 🔎`);

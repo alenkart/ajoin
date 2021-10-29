@@ -10,7 +10,7 @@ export class Message extends Event<"message"> {
     super("message", client);
   }
 
-  ignore(message: discord.Message): boolean {
+  async ignore(message: discord.Message) {
     return message.author.bot || !message.content.startsWith(this.prefix);
   }
 
@@ -25,7 +25,7 @@ export class Message extends Event<"message"> {
 
     const builder = new CommandBuilder(program);
 
-    for (let Command of Object.values(commands)) {
+    for (const Command of Object.values(commands)) {
       const command = new Command(this.client);
       builder.build(command, message);
 
@@ -33,6 +33,7 @@ export class Message extends Event<"message"> {
     }
 
     try {
+      console.log("message:", message.content);
       const content = message.content.substring(this.prefix.length).split(" ");
       await program.parseAsync(content, { from: "user" });
     } catch (error) {

@@ -14,7 +14,7 @@ export class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
     super("voiceStateUpdate", client);
   }
 
-  ignore(old, next: discord.VoiceState): boolean {
+  async ignore(old, next: discord.VoiceState) {
     //is the bot
     if (next.id === this.client.user?.id) {
       return true;

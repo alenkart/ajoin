@@ -1,10 +1,10 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 
 @Entity()
@@ -34,8 +34,8 @@ export class Sound extends BaseEntity {
     return this.find({ where: { guildId } });
   }
 
-  static findByGuildIdAndSoundId(guildId: string, name: string) {
-    return this.findOne({ where: { guildId, name } });
+  static findByGuildIdAndSoundId(guildId: string, soundId: string) {
+    return this.findOne({ where: { guildId, soundId } });
   }
 
   static async replace(sound: {

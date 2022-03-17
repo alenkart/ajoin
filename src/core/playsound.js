@@ -8,7 +8,7 @@ class Playsound {
     constructor() {
         if (!Playsound.instance) {
             this.map = {};
-            this.maxPlayingTime = 5 * 1000;
+            this.maxPlayingTime = 8 * 1000;
             this.maxAfkTime = 30 * 1000;
             this.volume = 0.8;
 

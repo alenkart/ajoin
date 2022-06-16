@@ -1,22 +1,17 @@
-import "reflect-metadata";
-import dotenv from "dotenv";
-import { TypeOrmDatabase } from "./core/IDatabase";
-import { Sound } from "./entities/Sound";
-import { Ready } from "@ajoin/events/Ready";
-import { Ajoin } from "@ajoin/core/Ajoin";
+import "dotenv/config";
+import { Client, Intents } from "discord.js";
+import ready from "@ajoin/events/ready";
+import messageCreate from "@ajoin/events/messageCreate";
 
-dotenv.config();
+const client = new Client({
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
 
-async function test() {
-  try {
-    const db = new TypeOrmDatabase();
-    await db.connect();
-  } catch (error) {
-    console.log(error);
-  }
-}
+  ],
+});
 
-test();
+client.on("ready", (args) => ready.handle(args));
+client.on("messageCreate", (args) => messageCreate.handle(args));
 
-const ajoin = new Ajoin();
-ajoin.listen();
+client.login(process.env.DISCORD_TOKEN);

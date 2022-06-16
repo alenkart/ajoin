@@ -1,21 +1,30 @@
-import discord from "discord.js";
-
-export interface CommandParams {
-  args: string[];
-  opts: { [key: string]: any };
-  message: discord.Message;
+interface Argument {
+  value?: string;
+  validate?: (input?: string) => boolean;
+  transform?: (input?: string) => string;
 }
 
-export abstract class Command {
-  abstract command: string;
-  abstract describe: string;
-  aliases?: string[];
-  options?: string[];
-  client: discord.Client;
+interface CommandConfig {
+  args?: Argument[];
+  handler?: (args: Argument[]) => void;
+}
 
-  constructor(client: discord.Client) {
-    this.client = client;
+class Command {
+  name: string;
+  args?: Argument[];
+  handler?: (args: Argument[]) => void;
+
+  constructor(name: string, { args, handler }: CommandConfig) {
+    this.name = name;
+    this.args = args;
+    this.handler = handler;
   }
 
-  abstract run(params: CommandParams): void;
+  execute(values?: string[]) {
+    const { args } = this;
+    const result = args?.map((arg, index) => arg.validate(values[index]));
+    console.log(result);
+  }
 }
+
+export default Command;

@@ -115,4 +115,6 @@ dist
 .pnp.*
 
 # Customs
+*.sqlite
 *.sqlite3
+*.db

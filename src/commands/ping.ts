@@ -14,7 +14,7 @@ ping.args = [
   },
 ];
 
-ping.handler = ({ message }) => {
+ping.run = ({ message }) => {
   message.reply("pong");
 };
 

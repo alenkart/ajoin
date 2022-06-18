@@ -3,7 +3,7 @@ import AudioModel from "@ajoin/models/Audio";
 
 const add = new Command("add");
 
-add.handler = async ({ message, args }) => {
+add.run = async ({ message, args }) => {
   const [name, url] = args;
 
   await AudioModel.create({

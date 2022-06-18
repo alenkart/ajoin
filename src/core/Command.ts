@@ -8,22 +8,22 @@ type CommandHandler = (params: { message: Message; args: string[] }) => void;
 
 interface CommandConfig {
   args?: Argument[];
-  handler?: CommandHandler;
+  run?: CommandHandler;
 }
 
 class Command {
   name: string;
   args?: Argument[];
-  handler?: CommandHandler;
+  run?: CommandHandler;
 
-  constructor(name: string, { args, handler }: CommandConfig = {}) {
+  constructor(name: string, { args, run }: CommandConfig = {}) {
     this.name = name;
     this.args = args;
-    this.handler = handler;
+    this.run = run;
   }
 
   execute(message: Message, args: string[]) {
-    this.handler({ message, args });
+    this.run({ message, args });
   }
 }
 

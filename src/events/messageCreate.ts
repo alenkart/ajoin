@@ -1,31 +1,12 @@
 import { Message } from "discord.js";
 import Event from "@ajoin/core/Event";
-import Lexer from "@ajoin/core/Lexer";
-import addCmd from "@ajoin/commands/add";
-import playCmd from "@ajoin/commands/play";
-import pingCmd from "@ajoin/commands/ping";
 
 class MessageCreate extends Event<"messageCreate"> {
   async ignore(message: Message) {
     return message.author.bot;
   }
 
-  async listen(message: Message) {
-    const lexer = new Lexer(message.content);
-    const [command, ...args] = lexer.tokenize();
-
-    switch (command) {
-      case "!add":
-        addCmd.execute(message, args);
-        break;
-      case "!play":
-        playCmd.execute(message, args);
-        break;
-      case "!ping":
-        pingCmd.execute(message, args);
-        break;
-    }
-  }
+  async listen(_: Message) {}
 }
 
 export default new MessageCreate();

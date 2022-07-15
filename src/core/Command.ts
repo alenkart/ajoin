@@ -1,30 +1,19 @@
-import { Message } from "discord.js";
-interface Argument {
-  validate?: (input?: string) => boolean;
-  transform?: (input?: string) => string;
-}
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { CacheType, CommandInteraction } from "discord.js";
 
-type CommandHandler = (params: { message: Message; args: string[] }) => void;
+export type Interaction = CommandInteraction<CacheType>;
 
-interface CommandConfig {
-  args?: Argument[];
-  run?: CommandHandler;
-}
+abstract class Command {
+  command = new SlashCommandBuilder();
 
-class Command {
-  name: string;
-  args?: Argument[];
-  run?: CommandHandler;
-
-  constructor(name: string, { args, run }: CommandConfig = {}) {
-    this.name = name;
-    this.args = args;
-    this.run = run;
+  get data() {
+    this.build();
+    return this.command.toJSON();
   }
 
-  execute(message: Message, args: string[]) {
-    this.run({ message, args });
-  }
+  abstract ignore(interaction: Interaction): Promise<boolean>;
+  abstract run(interaction: Interaction): Promise<void>;
+  abstract build();
 }
 
 export default Command;

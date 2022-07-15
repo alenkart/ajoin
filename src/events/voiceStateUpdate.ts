@@ -1,19 +1,17 @@
 import { VoiceState } from "discord.js";
 import Event from "@ajoin/core/Event";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
+import AudioModel from "@ajoin/models/Audio";
 
-export type StateMatcher = (
-  oldState: VoiceState,
-  newState: VoiceState
-) => boolean;
+export type StateMatcher = (old: VoiceState, next: VoiceState) => boolean;
 
-export const onJoinChannel: StateMatcher = (oldState, newState): boolean => {
-  return !oldState.channelId && !!newState.channelId;
+export const onJoinChannel: StateMatcher = (old, next): boolean => {
+  return !old.channelId && !!next.channelId;
 };
 
-export const onSwitchChannel: StateMatcher = (oldState, newState): boolean => {
-  const exists = oldState.channelId && newState.channelId;
-  const diff = oldState.channelId !== newState.channelId;
+export const onSwitchChannel: StateMatcher = (old, next): boolean => {
+  const exists = old.channelId && next.channelId;
+  const diff = old.channelId !== next.channelId;
   return exists && diff;
 };
 
@@ -25,18 +23,25 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
     this.matchers = matchers;
   }
 
-  async ignore(oldState, newState: VoiceState) {
-    if (newState.client.user.id == newState.id) return true;
-    return !this.matchers.some((marcher) => marcher(oldState, newState));
+  async ignore(old, next: VoiceState) {
+    if (next.client.user.id == next.id) return true;
+    return !this.matchers.some((marcher) => marcher(old, next));
   }
 
-  async listen(_: VoiceState, newState: VoiceState) {
-    const audioPlayer = new AudioPlayer();
+  async listen(_, next: VoiceState) {
+    try {
+      const { guild, member } = next;
 
-    audioPlayer.play(
-      newState.channel as any,
-      "https://www.myinstants.com/media/sounds/not-not.mp3"
-    );
+      const audio = await AudioModel.findOne({
+        guildId: guild.id,
+        name: `<@!${member.id}>`,
+      });
+
+      const audioPlayer = new AudioPlayer();
+      await audioPlayer.play(next.channel as any, audio.url);
+    } catch (error) {
+      console.log("VoiceStateUpdate", error);
+    }
   }
 }
 

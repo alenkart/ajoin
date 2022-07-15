@@ -12,11 +12,11 @@ import {
 } from "@discordjs/voice";
 
 class AudioPlayer {
-  async connectToChannel(channel: VoiceChannel) {
+  async joinVoiceChannel({ guildId, id: channelId, guild }: VoiceChannel) {
     const connection = joinVoiceChannel({
-      guildId: channel.guildId,
-      channelId: channel.id,
-      adapterCreator: channel.guild.voiceAdapterCreator,
+      guildId,
+      channelId,
+      adapterCreator: guild.voiceAdapterCreator,
     });
 
     try {
@@ -29,18 +29,17 @@ class AudioPlayer {
   }
 
   async play(channel: VoiceChannel, url: string) {
-    const player = createAudioPlayer();
-
-    const resource = createAudioResource(url, {
-      inputType: StreamType.Arbitrary,
-    });
-
     try {
-      const connection = await this.connectToChannel(channel);
+      const connection = await this.joinVoiceChannel(channel);
 
+      const resource = createAudioResource(url, {
+        inputType: StreamType.Arbitrary,
+      });
+
+      const player = createAudioPlayer();
       player.play(resource);
-      const subscription = connection.subscribe(player);
 
+      const subscription = connection.subscribe(player);
       setTimeout(() => subscription.unsubscribe(), 5_000);
 
       await entersState(player, AudioPlayerStatus.Playing, 5_000);

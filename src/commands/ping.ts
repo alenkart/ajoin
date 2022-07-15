@@ -1,21 +1,17 @@
-import Command from "@ajoin/core/Command";
+import Command, { Interaction } from "@ajoin/core/Command";
 
-const ping = new Command("ping");
+class Ping extends Command {
+  build() {
+    this.command.setName("ping").setDescription("description");
+  }
 
-ping.args = [
-  {
-    validate: (input) => /\w{1,8}/.test(input),
-  },
-  {
-    validate: (input) => /\d{1,30}/.test(input),
-  },
-  {
-    validate: (input) => /\d{1,30}/.test(input),
-  },
-];
+  async ignore(interaction: Interaction) {
+    return interaction.user.bot;
+  }
 
-ping.run = ({ message }) => {
-  message.reply("pong");
-};
+  async run(interaction: Interaction) {
+    await interaction.reply("pong");
+  }
+}
 
-export default ping;
+export default new Ping();

@@ -1,16 +1,38 @@
-import Command from "@ajoin/core/Command";
+import Command, { Interaction } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 
-const add = new Command("add");
+class Add extends Command {
+  build() {
+    this.command
+      .setName("add")
+      .setDescription("description")
+      .addStringOption((option) =>
+        option
+          .setName("name")
+          .setDescription("sound name or user mention")
+          .setRequired(true)
+      )
+      .addStringOption((option) =>
+        option.setName("url").setDescription("sound url").setRequired(true)
+      );
+  }
 
-add.run = async ({ message, args }) => {
-  const [name, url] = args;
+  async ignore(interaction: Interaction) {
+    return interaction.user.bot;
+  }
 
-  await AudioModel.create({
-    name,
-    url,
-    author: message.author.id,
-  });
-};
+  async run(interaction: Interaction) {
+    const { options, user, guild } = interaction;
 
-export default add;
+    const name = options.getString("name");
+    const url = options.getString("url");
+    const guildId = guild.id;
+    const authorId = user.id;
+
+    await AudioModel.create({ name, url, guildId, authorId });
+
+    await interaction.reply(`${name} ${url}`);
+  }
+}
+
+export default new Add();

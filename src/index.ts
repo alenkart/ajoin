@@ -1,20 +1,21 @@
 import "dotenv/config";
 import "@ajoin/helpers/prisma";
-import { Client, Intents } from "discord.js";
-import ready from "@ajoin/events/ready";
-import messageCreate from "@ajoin/events/messageCreate";
-import voiceStateUpdate from "@ajoin/events/voiceStateUpdate";
+import path from "node:path";
+import { Intents } from "discord.js";
+import Ajoin from "@ajoin/core/Ajoin";
 
-const client = new Client({
-  intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-  ],
-});
+(async () => {
+  const ajoin = new Ajoin({
+    intents: [
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.GUILD_VOICE_STATES,
+      Intents.FLAGS.GUILD_INTEGRATIONS,
+    ],
+  });
 
-client.on("ready", (...args) => ready.handle(...args));
-client.on("messageCreate", (...args) => messageCreate.handle(...args));
-client.on("voiceStateUpdate", (...args) => voiceStateUpdate.handle(...args));
-
-client.login(process.env.DISCORD_TOKEN);
+  await ajoin.login(process.env.DISCORD_TOKEN);
+  await ajoin.loadCommands(path.resolve(__dirname, "commands"));
+  await ajoin.loadEvents(path.resolve(__dirname, "events"));
+  await ajoin.postCommands();
+})();

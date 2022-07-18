@@ -5,15 +5,15 @@ import * as yup from "yup";
 
 class Add extends Command {
   name: string = "add";
-  description: string = "hello";
+  description: string = "Adds a new sound";
   options: Record<string, Option> = {
     name: {
-      description: "p",
+      description: "Audio name",
       validation: yup.string().required(),
       parser: ({ options }) => options.getString("name"),
     },
     url: {
-      description: "p",
+      description: "Audio url (.mp3)",
       validation: yup.string().url().required(),
       parser: ({ options }) => options.getString("url"),
     },

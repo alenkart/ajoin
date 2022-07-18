@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 class Ping extends Command {
   name: string = "ping";
-  description: string = "hello";
+  description: string = "Test ";
   options: Record<string, Option> = {
     name: {
       description: "p",

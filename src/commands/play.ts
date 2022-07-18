@@ -7,10 +7,10 @@ import * as yup from "yup";
 
 class Play extends Command {
   name: string = "play";
-  description: string = "hello";
+  description: string = "Plays a sound";
   options: Record<string, Option> = {
     name: {
-      description: "p",
+      description: "Audio name",
       validation: yup.string().required(),
       parser: ({ options }) => options.getString("name"),
     },

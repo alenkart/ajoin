@@ -1,42 +1,39 @@
+import Command, { Interaction, Option } from "@ajoin/core/Command";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
-import Command, { Interaction } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
+import logger from "@ajoin/helpers/logger";
 import * as discord from "@ajoin/helpers/discord";
+import * as yup from "yup";
 
 class Play extends Command {
-  build() {
-    this.command
-      .setName("play")
-      .setDescription("description")
-      .addStringOption((option) =>
-        option
-          .setName("name")
-          .setDescription("Sound name or discord user")
-          .setRequired(true)
-      );
-  }
+  name: string = "play";
+  description: string = "hello";
+  options: Record<string, Option> = {
+    name: {
+      description: "p",
+      validation: yup.string().required(),
+      parser: ({ options }) => options.getString("name"),
+    },
+  };
 
-  async ignore(interaction: Interaction) {
-    return interaction.user.bot;
-  }
-
-  async run(interaction: Interaction) {
+  async execute(interaction: Interaction) {
     try {
-      const { options, guild } = interaction;
+      const { guild } = interaction;
+
+      const values = this.getOptionsValues(interaction);
+      await this.validateOptionValues(values);
+
+      const audio = await AudioModel.findOne({ ...values, guildId: guild.id });
+
+      if (!audio) throw new Error("Audio not found");
 
       const voiceChannel = discord.getVoiceChannel(interaction);
-
-      const name = options.getString("name");
-      const guildId = guild.id;
-
-      const audio = await AudioModel.findOne({ name, guildId });
-
-      if (!audio) return;
-
       const audioPlayer = new AudioPlayer();
+
       await audioPlayer.play(voiceChannel, audio.url);
       await interaction.reply({ content: "Pong!" });
     } catch (error) {
+      logger.error(error.message);
       await interaction.reply("error");
     }
   }

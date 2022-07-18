@@ -1,16 +1,20 @@
-import Command, { Interaction } from "@ajoin/core/Command";
+import Command, { Interaction, Option } from "@ajoin/core/Command";
+import * as yup from "yup";
 
 class Ping extends Command {
-  build() {
-    this.command.setName("ping").setDescription("description");
-  }
+  name: string = "ping";
+  description: string = "hello";
+  options: Record<string, Option> = {
+    name: {
+      description: "p",
+      validation: yup.string().required(),
+      parser: ({ options }) => options.getString("name"),
+    },
+  };
 
-  async ignore(interaction: Interaction) {
-    return interaction.user.bot;
-  }
-
-  async run(interaction: Interaction) {
-    await interaction.reply("pong");
+  async execute(interaction: Interaction) {
+    const { name } = this.getOptionsValues(interaction);
+    await interaction.reply(name);
   }
 }
 

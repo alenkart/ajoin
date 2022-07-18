@@ -2,6 +2,7 @@ import { VoiceState } from "discord.js";
 import Event from "@ajoin/core/Event";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
 import AudioModel from "@ajoin/models/Audio";
+import * as discord from "@ajoin/helpers/discord";
 
 export type StateMatcher = (old: VoiceState, next: VoiceState) => boolean;
 
@@ -34,7 +35,7 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
 
       const audio = await AudioModel.findOne({
         guildId: guild.id,
-        name: `<@!${member.id}>`,
+        name: discord.getUserMention(member.id),
       });
 
       const audioPlayer = new AudioPlayer();

@@ -1,37 +1,43 @@
-import Command, { Interaction } from "@ajoin/core/Command";
+import Command, { Interaction, Option } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
+import logger from "@ajoin/helpers/logger";
+import * as yup from "yup";
 
 class Add extends Command {
-  build() {
-    this.command
-      .setName("add")
-      .setDescription("description")
-      .addStringOption((option) =>
-        option
-          .setName("name")
-          .setDescription("sound name or user mention")
-          .setRequired(true)
-      )
-      .addStringOption((option) =>
-        option.setName("url").setDescription("sound url").setRequired(true)
-      );
-  }
+  name: string = "add";
+  description: string = "hello";
+  options: Record<string, Option> = {
+    name: {
+      description: "p",
+      validation: yup.string().required(),
+      parser: ({ options }) => options.getString("name"),
+    },
+    url: {
+      description: "p",
+      validation: yup.string().url().required(),
+      parser: ({ options }) => options.getString("url"),
+    },
+  };
 
-  async ignore(interaction: Interaction) {
-    return interaction.user.bot;
-  }
+  async execute(interaction: Interaction) {
+    try {
+      const { user, guild } = interaction;
 
-  async run(interaction: Interaction) {
-    const { options, user, guild } = interaction;
+      const { name, url } = this.getOptionsValues(interaction);
+      await this.validateOptionValues({ name, url });
 
-    const name = options.getString("name");
-    const url = options.getString("url");
-    const guildId = guild.id;
-    const authorId = user.id;
+      await AudioModel.create({
+        name,
+        url,
+        guildId: guild.id,
+        authorId: user.id,
+      });
 
-    await AudioModel.create({ name, url, guildId, authorId });
-
-    await interaction.reply(`${name} ${url}`);
+      await interaction.reply(`${name} ${url}`);
+    } catch (error) {
+      logger.error(error.message);
+      await interaction.reply(error.message);
+    }
   }
 }
 

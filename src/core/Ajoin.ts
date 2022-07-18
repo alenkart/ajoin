@@ -1,10 +1,7 @@
 import { Client, ClientOptions, Collection } from "discord.js";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v10";
-
 import Command from "@ajoin/core/Command";
-import Event from "@ajoin/core/Event";
-import importAll from "@ajoin/helpers/importAll";
 
 class Ajoin extends Client {
   public commands: Collection<string, Command>;
@@ -12,28 +9,6 @@ class Ajoin extends Client {
   constructor(options: ClientOptions) {
     super(options);
     this.commands = new Collection();
-  }
-
-  async loadCommands(path: string) {
-    const commands = await importAll(path, (_, file) => file.default);
-
-    for (const [filename, file] of Object.entries(commands)) {
-      const name = filename.replace(".ts", "");
-      this.commands.set(name, file);
-
-      console.log("Command:", name);
-    }
-  }
-
-  async loadEvents(path: string) {
-    const events = await importAll(path, (_, file) => file.default);
-
-    for (const [filename, file] of Object.entries(events)) {
-      const event = filename.replace(".ts", "");
-      this.on(event, (...args) => (file as Event<any>).handle(...args));
-
-      console.log("Event:", event);
-    }
   }
 
   async postCommands() {

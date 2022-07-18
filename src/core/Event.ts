@@ -5,16 +5,16 @@ type EventTypes = keyof ClientEvents;
 type EventParams<T extends EventTypes> = ClientEvents[T];
 
 abstract class Event<T extends EventTypes> {
-  abstract listen(...args: EventParams<T>): Promise<void>;
+  abstract execute(...args: EventParams<T>): Promise<void>;
 
   async ignore(..._args: EventParams<T>) {
     return false;
   }
 
-  async handle(...args: EventParams<T>) {
+  async listener(...args: EventParams<T>) {
     if (await this.ignore(...args)) return;
 
-    await this.listen(...args);
+    await this.execute(...args);
   }
 }
 

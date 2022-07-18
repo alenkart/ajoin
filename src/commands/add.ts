@@ -1,25 +1,30 @@
-import Command, { Interaction, Option } from "@ajoin/core/Command";
+import { CommandInteraction } from "discord.js";
+import Command from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
 import * as yup from "yup";
 
 class Add extends Command {
-  name: string = "add";
-  description: string = "Adds a new sound";
-  options: Record<string, Option> = {
-    name: {
-      description: "Audio name",
-      validation: yup.string().required(),
-      parser: ({ options }) => options.getString("name"),
-    },
-    url: {
-      description: "Audio url (.mp3)",
-      validation: yup.string().url().required(),
-      parser: ({ options }) => options.getString("url"),
-    },
-  };
+  constructor() {
+    super({
+      name: "add",
+      description: "Adds a new sound",
+      options: {
+        name: {
+          description: "Audio name",
+          validation: yup.string().required(),
+          parser: ({ options }) => options.getString("name"),
+        },
+        url: {
+          description: "Audio url (.mp3)",
+          validation: yup.string().url().required(),
+          parser: ({ options }) => options.getString("url"),
+        },
+      },
+    });
+  }
 
-  async execute(interaction: Interaction) {
+  async execute(interaction: CommandInteraction) {
     try {
       const { user, guild } = interaction;
 
@@ -35,7 +40,7 @@ class Add extends Command {
 
       await interaction.reply(`${name} ${url}`);
     } catch (error) {
-      logger.error(error.message);
+      logger.error("Command: Add", error.message);
       await interaction.reply(error.message);
     }
   }

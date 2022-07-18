@@ -9,6 +9,17 @@ interface Audio {
 }
 
 class AudioModel {
+  async nameStartsWith(name: string, where: Partial<Omit<Audio, 'name'>>) {
+    return await prisma.audio.findMany({
+      where: {
+        name: {
+          startsWith: name,
+        },
+        ...where,
+      },
+    });
+  }
+
   async findOne(where: Partial<Audio>) {
     return await prisma.audio.findFirst({ where });
   }

@@ -19,7 +19,7 @@ Object.values(commands).forEach((command) =>
 );
 
 Object.entries(events).forEach(([name, event]) =>
-  ajoin.on(name, (...args) => (event as any).handle(...args))
+  ajoin.on(name, (...args) => event.listener(...args))
 );
 
 ajoin.login(process.env.DISCORD_TOKEN);

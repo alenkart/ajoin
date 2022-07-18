@@ -3,6 +3,7 @@ import Event from "@ajoin/core/Event";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
 import AudioModel from "@ajoin/models/Audio";
 import * as discord from "@ajoin/helpers/discord";
+import logger from "@ajoin/helpers/logger";
 
 export type StateMatcher = (old: VoiceState, next: VoiceState) => boolean;
 
@@ -29,7 +30,7 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
     return !this.matchers.some((marcher) => marcher(old, next));
   }
 
-  async listen(_, next: VoiceState) {
+  async execute(_, next: VoiceState) {
     try {
       const { guild, member } = next;
 
@@ -41,7 +42,7 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
       const audioPlayer = new AudioPlayer();
       await audioPlayer.play(next.channel as any, audio.url);
     } catch (error) {
-      console.log("VoiceStateUpdate", error);
+      logger.error(`Event: VoiceStateUpdate`, error?.message);
     }
   }
 }

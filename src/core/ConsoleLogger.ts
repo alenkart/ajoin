@@ -1,5 +1,5 @@
 import Logger from "@ajoin/core/Logger";
-import LoggerFormat from "./LoggerFormat";
+import LoggerFormat from "@ajoin/core/LoggerFormat";
 
 enum Colors {
   Default = "\x1b[0m",

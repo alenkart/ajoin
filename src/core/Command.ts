@@ -1,21 +1,29 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CacheType, CommandInteraction } from "discord.js";
+import { CommandInteraction, AutocompleteInteraction } from "discord.js";
 import { AnySchema, object as yupObject } from "yup";
 
-export type Interaction = CommandInteraction<CacheType>;
-export type Parser = (interaction: Interaction) => string;
+export type OptionParser = (
+  interaction: CommandInteraction | AutocompleteInteraction
+) => string;
 
 export interface Option {
   description: string;
   required?: boolean;
+  autocomplete?: boolean;
   validation?: AnySchema;
-  parser: Parser;
+  parser: OptionParser;
+}
+
+export interface CommandProps {
+  name: string;
+  description: string;
+  options?: Record<string, Option>;
 }
 
 abstract class Command {
-  abstract name: string;
-  abstract description: string;
-  abstract options: Record<string, Option>;
+  name: string;
+  description: string;
+  options: Record<string, Option>;
 
   get data() {
     return this.build().toJSON();
@@ -32,7 +40,7 @@ abstract class Command {
   }
 
   get optionParsers() {
-    const map = new Map<string, Parser>();
+    const map = new Map<string, OptionParser>();
 
     for (const [name, option] of Object.entries(this.options)) {
       map.set(name, option.parser);
@@ -41,8 +49,14 @@ abstract class Command {
     return map;
   }
 
-  getOptionsValues(interaction: Interaction) {
-    const values: Record<string, any> = {};
+  constructor({ name, description, options = {} }: CommandProps) {
+    this.name = name;
+    this.description = description;
+    this.options = options;
+  }
+
+  getOptionsValues(interaction: CommandInteraction | AutocompleteInteraction) {
+    const values: Record<string, string> = {};
 
     for (const [name, parser] of this.optionParsers) {
       values[name] = parser(interaction);
@@ -57,22 +71,30 @@ abstract class Command {
   }
 
   build() {
-    const builder = new SlashCommandBuilder();
+    const commandBuilder = new SlashCommandBuilder();
 
-    builder.setName(this.name).setDescription(this.description);
+    commandBuilder.setName(this.name).setDescription(this.description);
 
-    for (const [name, { description, required = true }] of Object.entries(
-      this.options
-    )) {
-      builder.addStringOption((builder) =>
-        builder.setName(name).setDescription(description).setRequired(required)
+    for (const [name, options] of Object.entries(this.options)) {
+      const { description, required = true, autocomplete = false } = options;
+
+      commandBuilder.addStringOption((optionBuilder) =>
+        optionBuilder
+          .setName(name)
+          .setDescription(description)
+          .setRequired(required)
+          .setAutocomplete(autocomplete)
       );
     }
 
-    return builder;
+    return commandBuilder;
   }
 
-  abstract execute(interaction: Interaction): Promise<void>;
+  async onAutocomplete(interaction: AutocompleteInteraction) {
+    await interaction.respond([]);
+  }
+
+  abstract execute(interaction: CommandInteraction): Promise<void>;
 }
 
 export default Command;

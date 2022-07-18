@@ -5,7 +5,7 @@ import Event from "@ajoin/core/Event";
 import logger from "@ajoin/helpers/logger";
 
 class Ready extends Event<"ready"> {
-  async listen(client: Ajoin) {
+  async execute(client: Ajoin) {
     console.log("Discord Js", client.user.tag);
 
     const { DISCORD_TOKEN, GUILD_ID } = process.env;
@@ -25,7 +25,7 @@ class Ready extends Event<"ready"> {
 
       console.log("Successfully reloaded application (/) commands.");
     } catch (error) {
-      logger.error(error.message);
+      logger.error(`Event: Ready`, error?.message);
     }
   }
 }

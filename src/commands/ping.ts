@@ -1,11 +1,15 @@
-import Command, { Interaction, Option } from "@ajoin/core/Command";
+import { CommandInteraction } from "discord.js";
+import Command from "@ajoin/core/Command";
 
 class Ping extends Command {
-  name: string = "ping";
-  description: string = "A test command";
-  options: Record<string, Option> = {};
+  constructor() {
+    super({
+      name: "ping",
+      description: "A test command",
+    });
+  }
 
-  async execute(interaction: Interaction) {
+  async execute(interaction: CommandInteraction) {
     await interaction.reply("Pong!");
   }
 }

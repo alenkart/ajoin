@@ -1,4 +1,5 @@
-import Command, { Interaction, Option } from "@ajoin/core/Command";
+import { CommandInteraction } from "discord.js";
+import Command from "@ajoin/core/Command";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
@@ -6,17 +7,21 @@ import * as discord from "@ajoin/helpers/discord";
 import * as yup from "yup";
 
 class Play extends Command {
-  name: string = "play";
-  description: string = "Plays a sound";
-  options: Record<string, Option> = {
-    name: {
-      description: "Audio name",
-      validation: yup.string().required(),
-      parser: ({ options }) => options.getString("name"),
-    },
-  };
+  constructor() {
+    super({
+      name: "play",
+      description: "Plays a sound",
+      options: {
+        name: {
+          description: "Audio name",
+          validation: yup.string().required(),
+          parser: ({ options }) => options.getString("name"),
+        },
+      },
+    });
+  }
 
-  async execute(interaction: Interaction) {
+  async execute(interaction: CommandInteraction) {
     try {
       const { guild } = interaction;
 
@@ -31,9 +36,9 @@ class Play extends Command {
       const audioPlayer = new AudioPlayer();
 
       await audioPlayer.play(voiceChannel, audio.url);
-      await interaction.reply({ content: "Pong!" });
+      await interaction.reply(`${audio.name}`);
     } catch (error) {
-      logger.error(error.message);
+      logger.error("Command: Play", error.message);
       await interaction.reply("error");
     }
   }

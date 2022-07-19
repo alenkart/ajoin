@@ -6,45 +6,66 @@ import {
   createAudioPlayer,
   createAudioResource,
   entersState,
+  getVoiceConnection,
   joinVoiceChannel,
   StreamType,
   VoiceConnectionStatus,
 } from "@discordjs/voice";
+import Timeout from "@ajoin/core/Timeout";
+import logger from "@ajoin/helpers/logger";
 
 class AudioPlayer {
-  async joinVoiceChannel({ guildId, id: channelId, guild }: VoiceChannel) {
+  private audioPlayer = createAudioPlayer();
+  private playTimeout = new Timeout();
+  private afkTimeout = new Timeout();
+
+  private async getConnection(channel: VoiceChannel) {
+    const { guild, id: channelId } = channel;
+    const connection = getVoiceConnection(guild.id);
+
+    if (connection?.joinConfig?.channelId === channelId) return connection;
+
+    return await this.createConnection(channel);
+  }
+
+  private async createConnection(channel: VoiceChannel) {
+    const { guild, id: channelId } = channel;
+
     const connection = joinVoiceChannel({
-      guildId,
       channelId,
+      guildId: guild.id,
       adapterCreator: guild.voiceAdapterCreator,
     });
 
-    try {
-      await entersState(connection, VoiceConnectionStatus.Ready, 30e3);
-      return connection;
-    } catch (error) {
-      connection.destroy();
-      throw error;
-    }
+    await entersState(connection, VoiceConnectionStatus.Ready, 5_000);
+
+    return connection;
+  }
+
+  private getResource(url: string) {
+    return createAudioResource(url, {
+      inputType: StreamType.Arbitrary,
+      inlineVolume: true,
+    });
   }
 
   async play(channel: VoiceChannel, url: string) {
     try {
-      const connection = await this.joinVoiceChannel(channel);
+      this.afkTimeout.clean();
+      this.playTimeout.clean();
 
-      const resource = createAudioResource(url, {
-        inputType: StreamType.Arbitrary,
-      });
+      const connection = await this.getConnection(channel);
+      const resource = this.getResource(url);
+      const subscription = connection.subscribe(this.audioPlayer);
 
-      const player = createAudioPlayer();
-      player.play(resource);
+      this.audioPlayer.play(resource);
 
-      const subscription = connection.subscribe(player);
-      setTimeout(() => subscription.unsubscribe(), 5_000);
+      await entersState(this.audioPlayer, AudioPlayerStatus.Playing, 5_000);
 
-      await entersState(player, AudioPlayerStatus.Playing, 5_000);
+      this.playTimeout.start(() => subscription.unsubscribe(), 8_000);
+      this.afkTimeout.start(() => connection.destroy(), 60_000);
     } catch (error) {
-      console.log(error);
+      logger.error("AudioPlayer", error?.message);
     }
   }
 }

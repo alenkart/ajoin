@@ -1,9 +1,9 @@
 import { VoiceState } from "discord.js";
 import Event from "@ajoin/core/Event";
-import AudioPlayer from "@ajoin/core/AudioPlayer";
 import AudioModel from "@ajoin/models/Audio";
 import * as discord from "@ajoin/helpers/discord";
 import logger from "@ajoin/helpers/logger";
+import Ajoin from "@ajoin/core/Ajoin";
 
 export type StateMatcher = (old: VoiceState, next: VoiceState) => boolean;
 
@@ -39,8 +39,12 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
         name: discord.getUserMention(member.id),
       });
 
-      const audioPlayer = new AudioPlayer();
-      await audioPlayer.play(next.channel as any, audio.url);
+      if (!audio) return;
+
+      const client = next.client as Ajoin;
+      const player = client.getPlayer(guild.id);
+
+      await player.play(next.channel as any, audio.url);
     } catch (error) {
       logger.error(`Event: VoiceStateUpdate`, error?.message);
     }

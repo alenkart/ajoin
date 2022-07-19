@@ -8,28 +8,37 @@ interface Audio {
   authorId: string;
 }
 
+interface AudioDelete {
+  name: string;
+  guildId: string;
+}
+
 class AudioModel {
-  async nameStartsWith(name: string, where: Partial<Omit<Audio, 'name'>>) {
-    return await prisma.audio.findMany({
-      where: {
-        name: {
-          startsWith: name,
-        },
-        ...where,
-      },
-    });
+  async create(data: Omit<Audio, "id">) {
+    return await prisma.audio.create({ data });
   }
 
   async findOne(where: Partial<Audio>) {
     return await prisma.audio.findFirst({ where });
   }
 
-  async create(data: Omit<Audio, "id">) {
-    return await prisma.audio.create({ data });
+  async deleteBy({ name, guildId }: AudioDelete) {
+    return await prisma.audio.delete({
+      where: {
+        name_guildId: { name, guildId },
+      },
+    });
   }
 
-  async delete(id: number) {
-    return await prisma.audio.delete({ where: { id } });
+  async searchByName(name: string, where: Partial<Audio>) {
+    return await prisma.audio.findMany({
+      where: {
+        ...where,
+        name: {
+          startsWith: name,
+        },
+      },
+    });
   }
 }
 

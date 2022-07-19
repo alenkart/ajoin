@@ -4,21 +4,16 @@ import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
 import * as z from "zod";
 
-class Add extends Command {
+class Remove extends Command {
   constructor() {
     super({
-      name: "add",
-      description: "Adds a new sound",
+      name: "remove",
+      description: "Deletes a audio",
       options: {
         name: {
           description: "Audio name",
           validation: z.string(),
           parser: ({ options }) => options.getString("name"),
-        },
-        url: {
-          description: "Audio url (.mp3)",
-          validation: z.string().url(),
-          parser: ({ options }) => options.getString("url"),
         },
       },
     });
@@ -26,23 +21,21 @@ class Add extends Command {
 
   async execute(interaction: CommandInteraction) {
     try {
-      const { user, guild } = interaction;
-      const { name, url } = this.getOptionsValues(interaction);
-      await this.validateOptionValues({ name, url });
+      const { guild } = interaction;
+      const { name } = this.getOptionsValues(interaction);
+      await this.validateOptionValues({ name });
 
-      await AudioModel.create({
+      await AudioModel.deleteBy({
         name,
-        url,
         guildId: guild.id,
-        authorId: user.id,
       });
 
-      await interaction.reply(`Added ${name} ${url}`);
+      await interaction.reply(`Removed ${name}`);
     } catch (error) {
-      logger.error("Command: Add", error.message);
+      logger.error("Command: Remove", error.message);
       await interaction.reply(error.message);
     }
   }
 }
 
-export default new Add();
+export default new Remove();

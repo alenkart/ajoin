@@ -2,7 +2,7 @@ import { AutocompleteInteraction, CommandInteraction } from "discord.js";
 import Command from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
-import * as yup from "yup";
+import * as z from "zod";
 
 class Show extends Command {
   constructor() {
@@ -13,7 +13,7 @@ class Show extends Command {
         name: {
           description: "Audio name",
           autocomplete: true,
-          validation: yup.string().required(),
+          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
       },
@@ -26,7 +26,7 @@ class Show extends Command {
       const { name } = this.getOptionsValues(interaction);
       await this.validateOptionValues({ name });
 
-      const audios = await AudioModel.nameStartsWith(name, {
+      const audios = await AudioModel.searchByName(name, {
         guildId: guild.id,
       });
 

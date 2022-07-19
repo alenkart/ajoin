@@ -1,10 +1,10 @@
 import { CommandInteraction } from "discord.js";
 import Command from "@ajoin/core/Command";
-import AudioPlayer from "@ajoin/core/AudioPlayer";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
 import * as discord from "@ajoin/helpers/discord";
-import * as yup from "yup";
+import * as z from "zod";
+import Ajoin from "@ajoin/core/Ajoin";
 
 class Play extends Command {
   constructor() {
@@ -14,7 +14,7 @@ class Play extends Command {
       options: {
         name: {
           description: "Audio name",
-          validation: yup.string().required(),
+          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
       },
@@ -24,7 +24,6 @@ class Play extends Command {
   async execute(interaction: CommandInteraction) {
     try {
       const { guild } = interaction;
-
       const values = this.getOptionsValues(interaction);
       await this.validateOptionValues(values);
 
@@ -33,13 +32,14 @@ class Play extends Command {
       if (!audio) throw new Error("Audio not found");
 
       const voiceChannel = discord.getVoiceChannel(interaction);
-      const audioPlayer = new AudioPlayer();
+      const client = interaction.client as Ajoin;
+      const player = client.getPlayer(guild.id);
 
-      await audioPlayer.play(voiceChannel, audio.url);
+      await player.play(voiceChannel, audio.url);
       await interaction.reply(`${audio.name}`);
     } catch (error) {
       logger.error("Command: Play", error.message);
-      await interaction.reply("error");
+      await interaction.reply(error.message);
     }
   }
 }

@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, AutocompleteInteraction } from "discord.js";
-import { AnySchema, object as yupObject } from "yup";
+import * as z from "zod";
 
 export type OptionParser = (
   interaction: CommandInteraction | AutocompleteInteraction
@@ -10,7 +10,7 @@ export interface Option {
   description: string;
   required?: boolean;
   autocomplete?: boolean;
-  validation?: AnySchema;
+  validation?: z.Schema;
   parser: OptionParser;
 }
 
@@ -30,10 +30,10 @@ abstract class Command {
   }
 
   get optionValidations() {
-    const map = new Map<string, AnySchema>();
+    const map: Record<string, z.Schema> = {};
 
     for (const [name, option] of Object.entries(this.options)) {
-      map.set(name, option.validation);
+      map[name] = option.validation;
     }
 
     return map;
@@ -66,8 +66,17 @@ abstract class Command {
   }
 
   async validateOptionValues(values: Record<string, any>) {
-    const schema = yupObject(this.optionValidations as any);
-    return await schema.validate(values);
+    try {
+      return z.object(this.optionValidations).parse(values);
+    } catch (error) {
+      const message = !(error instanceof z.ZodError)
+        ? error.message
+        : error.issues
+            .map((issue) => `\`${issue.path}\`: ${issue.message}`)
+            .join(", ");
+
+      throw new Error(message);
+    }
   }
 
   build() {

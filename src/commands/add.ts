@@ -1,8 +1,9 @@
 import { CommandInteraction } from "discord.js";
-import Command from "@ajoin/core/Command";
+import { z } from "zod";
+import { Command } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
-import * as z from "zod";
+import validate from "@ajoin/helpers/validate";
 
 class Add extends Command {
   constructor() {
@@ -12,12 +13,10 @@ class Add extends Command {
       options: {
         name: {
           description: "Audio name",
-          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
         url: {
           description: "Audio url (.mp3)",
-          validation: z.string().url(),
           parser: ({ options }) => options.getString("url"),
         },
       },
@@ -28,15 +27,23 @@ class Add extends Command {
     try {
       const { user, guild } = interaction;
       const { name, url } = this.getOptionsValues(interaction);
-      await this.validateOptionValues({ name, url });
 
-      await AudioModel.create({
-        name,
-        url,
-        guildId: guild.id,
-        authorId: user.id,
-      });
+      const values = validate(
+        {
+          name: z.string(),
+          url: z.string().url(),
+          guildId: z.string(),
+          authorId: z.string(),
+        },
+        {
+          name,
+          url,
+          guildId: guild?.id,
+          authorId: user.id,
+        }
+      );
 
+      await AudioModel.create(values);
       await interaction.reply(`Added ${name} ${url}`);
     } catch (error) {
       logger.error("Command: Add", error.message);

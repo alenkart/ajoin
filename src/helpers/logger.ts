@@ -1,5 +1,3 @@
-import ConsoleLogger from "@ajoin/core/ConsoleLogger";
+import Logger from "@ajoin/core/Logger";
 
-const logger = new ConsoleLogger();
-
-export default logger;
+export default new Logger();

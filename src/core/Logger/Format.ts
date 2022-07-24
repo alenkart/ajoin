@@ -1,4 +1,4 @@
-class LoggerFormat {
+class Format {
   content: string[] = [];
 
   level(level: string) {
@@ -26,4 +26,4 @@ class LoggerFormat {
   }
 }
 
-export default LoggerFormat;
+export default Format;

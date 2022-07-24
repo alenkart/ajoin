@@ -1,8 +1,9 @@
 import { CommandInteraction } from "discord.js";
-import Command from "@ajoin/core/Command";
+import { z } from "zod";
+import { Command } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
-import * as z from "zod";
+import validate from "@ajoin/helpers/validate";
 
 class Remove extends Command {
   constructor() {
@@ -12,7 +13,6 @@ class Remove extends Command {
       options: {
         name: {
           description: "Audio name",
-          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
       },
@@ -23,13 +23,23 @@ class Remove extends Command {
     try {
       const { guild } = interaction;
       const { name } = this.getOptionsValues(interaction);
-      await this.validateOptionValues({ name });
 
-      await AudioModel.deleteBy({
-        name,
-        guildId: guild.id,
-      });
+      const values = validate(
+        {
+          name: z.string(),
+          guildId: z.string(),
+        },
+        {
+          name,
+          guildId: guild?.id,
+        }
+      );
 
+      const audio = await AudioModel.findOne(values);
+
+      if (!audio) throw new Error("Audio not found");
+
+      await AudioModel.deleteById(audio.id);
       await interaction.reply(`Removed ${name}`);
     } catch (error) {
       logger.error("Command: Remove", error.message);

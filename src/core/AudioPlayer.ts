@@ -58,6 +58,8 @@ class AudioPlayer {
       const resource = this.getResource(url);
       const subscription = connection.subscribe(this.audioPlayer);
 
+      if (!subscription) return;
+
       this.audioPlayer.play(resource);
 
       await entersState(this.audioPlayer, AudioPlayerStatus.Playing, 5_000);

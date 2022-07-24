@@ -1,39 +1,42 @@
 import {
-  Interaction,
   CommandInteraction,
   AutocompleteInteraction,
+  Collection,
 } from "discord.js";
 import Ajoin from "@ajoin/core/Ajoin";
 import Event from "@ajoin/core/Event";
+import Timeout from "@ajoin/core/Timeout";
 import logger from "@ajoin/helpers/logger";
 
+type Interaction = CommandInteraction | AutocompleteInteraction;
+
 class InteractionCreate extends Event<"interactionCreate"> {
-  async autocomplete(interaction: AutocompleteInteraction) {
-    const { commandName } = interaction;
-    const client = interaction.client as Ajoin;
-    const command = client.getCommand(commandName);
+  coolDowns = new Collection<string, Timeout>();
 
-    if (!command) throw new Error(`Autocomplete ${commandName} not found`);
+  getCommand({ client, commandName, options }: Interaction) {
+    const command = (client as Ajoin).getCommand(commandName);
 
-    await command.onAutocomplete(interaction);
-  }
+    if (!command) return;
 
-  async command(interaction: CommandInteraction) {
-    const { commandName } = interaction;
-    const client = interaction.client as Ajoin;
-    const command = client.getCommand(commandName);
+    const subCommandName = options.getSubcommand(false);
 
-    if (!command) throw new Error(`Command ${commandName} not found`);
+    if (!subCommandName) return command;
 
-    await command.execute(interaction);
+    return command.subCommands.find(
+      (subCommand) => subCommand.name === subCommandName
+    );
   }
 
   async execute(interaction: Interaction) {
     try {
-      if (interaction.isAutocomplete()) {
-        await this.autocomplete(interaction);
-      } else if (interaction.isCommand()) {
-        await this.command(interaction);
+      const command = this.getCommand(interaction);
+
+      if (!command) throw new Error(`Command not found`);
+
+      if (interaction.isCommand()) {
+        await command.execute(interaction);
+      } else if (interaction.isAutocomplete()) {
+        await command.onAutocomplete(interaction);
       }
     } catch (error) {
       logger.error(`Event: InteractionCreate`, error?.message);

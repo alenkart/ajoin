@@ -1,8 +1,9 @@
 import { AutocompleteInteraction, CommandInteraction } from "discord.js";
-import Command from "@ajoin/core/Command";
+import { z } from "zod";
+import { Command } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
-import * as z from "zod";
+import validate from "@ajoin/helpers/validate";
 
 class Show extends Command {
   constructor() {
@@ -13,7 +14,6 @@ class Show extends Command {
         name: {
           description: "Audio name",
           autocomplete: true,
-          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
       },
@@ -24,10 +24,20 @@ class Show extends Command {
     try {
       const { guild } = interaction;
       const { name } = this.getOptionsValues(interaction);
-      await this.validateOptionValues({ name });
 
-      const audios = await AudioModel.searchByName(name, {
-        guildId: guild.id,
+      const values = validate(
+        {
+          name: z.string(),
+          guildId: z.string(),
+        },
+        {
+          name,
+          guildId: guild?.id,
+        }
+      );
+
+      const audios = await AudioModel.searchByName(values.name, {
+        guildId: values.guildId,
       });
 
       const response = audios.map((audio) => ({
@@ -44,20 +54,25 @@ class Show extends Command {
 
   async execute(interaction: CommandInteraction) {
     try {
-      const { client } = interaction;
+      const { guild, user } = interaction;
+      const { name } = this.getOptionsValues(interaction);
 
-      const values = this.getOptionsValues(interaction);
-      await this.validateOptionValues(values);
+      const values = validate(
+        {
+          name: z.string(),
+          guildId: z.string(),
+        },
+        {
+          name,
+          guildId: guild?.id,
+        }
+      );
 
       const audio = await AudioModel.findOne(values);
 
       if (!audio) throw new Error("Audio not found");
 
-      const user = client.users.cache.find(
-        (user) => user.id === audio.authorId
-      );
-
-      await interaction.reply(`${audio.name} ${user.tag} ${audio.url}`);
+      await interaction.reply(`${audio.name} ${user?.tag} ${audio.url}`);
     } catch (error) {
       logger.error("Command: Show", error.message);
       await interaction.reply(error.message);

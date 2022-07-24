@@ -6,7 +6,9 @@ class MessageCreate extends Event<"messageCreate"> {
     return message.author.bot;
   }
 
-  async execute(_: Message) {}
+  async execute(_: Message) {
+    console.log(_.content)
+  }
 }
 
 export default new MessageCreate();

@@ -14,6 +14,17 @@ interface AudioDelete {
 }
 
 class AudioModel {
+  async upsert(data: Omit<Audio, "id">) {
+    return await prisma.audio.upsert({
+      create: data,
+      update: {
+        name: data.name,
+        url: data.url,
+      },
+      where: { name_guildId: data },
+    });
+  }
+
   async create(data: Omit<Audio, "id">) {
     return await prisma.audio.create({ data });
   }
@@ -22,11 +33,9 @@ class AudioModel {
     return await prisma.audio.findFirst({ where });
   }
 
-  async deleteBy({ name, guildId }: AudioDelete) {
+  async deleteById(id: number) {
     return await prisma.audio.delete({
-      where: {
-        name_guildId: { name, guildId },
-      },
+      where: { id },
     });
   }
 

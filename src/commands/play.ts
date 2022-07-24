@@ -1,10 +1,11 @@
 import { CommandInteraction } from "discord.js";
-import Command from "@ajoin/core/Command";
+import { z } from "zod";
+import Ajoin from "@ajoin/core/Ajoin";
+import { Command } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
+import validate from "@ajoin/helpers/validate";
 import * as discord from "@ajoin/helpers/discord";
-import * as z from "zod";
-import Ajoin from "@ajoin/core/Ajoin";
 
 class Play extends Command {
   constructor() {
@@ -14,7 +15,6 @@ class Play extends Command {
       options: {
         name: {
           description: "Audio name",
-          validation: z.string(),
           parser: ({ options }) => options.getString("name"),
         },
       },
@@ -24,16 +24,29 @@ class Play extends Command {
   async execute(interaction: CommandInteraction) {
     try {
       const { guild } = interaction;
-      const values = this.getOptionsValues(interaction);
-      await this.validateOptionValues(values);
+      const { name } = this.getOptionsValues(interaction);
 
-      const audio = await AudioModel.findOne({ ...values, guildId: guild.id });
+      const values = validate(
+        {
+          name: z.string(),
+          guildId: z.string(),
+        },
+        {
+          name,
+          guildId: guild?.id,
+        }
+      );
+
+      const audio = await AudioModel.findOne(values);
 
       if (!audio) throw new Error("Audio not found");
 
       const voiceChannel = discord.getVoiceChannel(interaction);
+
+      if (!voiceChannel) throw new Error("Voice Channel is undefined");
+
       const client = interaction.client as Ajoin;
-      const player = client.getPlayer(guild.id);
+      const player = client.getAudioPlayer(values.guildId);
 
       await player.play(voiceChannel, audio.url);
       await interaction.reply(`${audio.name}`);

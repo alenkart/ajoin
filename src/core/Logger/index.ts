@@ -1,21 +1,21 @@
-import Logger from "@ajoin/core/Logger";
-import LoggerFormat from "@ajoin/core/LoggerFormat";
+import Colors from "./Colors";
+import Format from "./Format";
 
-enum Colors {
-  Default = "\x1b[0m",
-  Red = "\x1b[31m",
-  Green = "\x1b[32m",
-  Yellow = "\x1b[33m",
-  Blue = "\x1b[36m",
+abstract class BaseLogger {
+  abstract log(...texts: string[]): void;
+  abstract info(...texts: string[]): void;
+  abstract debug(...texts: string[]): void;
+  abstract warn(...texts: string[]): void;
+  abstract error(...texts: string[]): void;
 }
 
-class ConsoleLogger extends Logger {
+class Logger extends BaseLogger {
   get env() {
     return `Env: ${process.env.ENV || "development"}`;
   }
 
   format(level: string, ...texts: string[]) {
-    const format = new LoggerFormat();
+    const format = new Format();
 
     format.level(level).date().text(this.env);
 
@@ -63,4 +63,4 @@ class ConsoleLogger extends Logger {
   }
 }
 
-export default ConsoleLogger;
+export default Logger;

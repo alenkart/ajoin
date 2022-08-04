@@ -10,19 +10,19 @@ class Remove extends Command {
     super({
       name: "remove",
       description: "Deletes a audio",
-      options: {
-        name: {
+      options: [
+        {
+          name: "name",
           description: "Audio name",
-          parser: ({ options }) => options.getString("name"),
+          type: "string",
         },
-      },
+      ],
     });
   }
 
   async execute(interaction: CommandInteraction) {
     try {
-      const { guild } = interaction;
-      const { name } = this.getOptionsValues(interaction);
+      const { guild, options } = interaction;
 
       const values = validate(
         {
@@ -30,7 +30,7 @@ class Remove extends Command {
           guildId: z.string(),
         },
         {
-          name,
+          name: options.getString("name"),
           guildId: guild?.id,
         }
       );
@@ -42,8 +42,8 @@ class Remove extends Command {
       await AudioModel.deleteById(audio.id);
       await interaction.reply(`Removed ${name}`);
     } catch (error) {
-      logger.error("Command: Remove", error.message);
       await interaction.reply(error.message);
+      logger.error("Command: Remove", error.message);
     }
   }
 }

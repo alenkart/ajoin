@@ -37,12 +37,12 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
 
       const values = validate(
         {
-          memberId: z.string(),
           guildId: z.string(),
+          authorId: z.string(),
         },
         {
-          guildId: guild.id,
-          memberId: member?.id,
+          guildId: guild?.id,
+          authorId: member?.id,
         }
       );
 

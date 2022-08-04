@@ -31,7 +31,7 @@ class Ready extends Event<"ready"> {
       }
     );
 
-    const rest = new REST({ version: "9" }).setToken(values.DISCORD_TOKEN);
+    const rest = new REST({ version: "10" }).setToken(values.DISCORD_TOKEN);
 
     try {
       const route =

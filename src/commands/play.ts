@@ -12,19 +12,19 @@ class Play extends Command {
     super({
       name: "play",
       description: "Plays a sound",
-      options: {
-        name: {
-          description: "Audio name",
-          parser: ({ options }) => options.getString("name"),
+      options: [
+        {
+          name: "name",
+          description: "name of the audio",
+          type: "string",
         },
-      },
+      ],
     });
   }
 
   async execute(interaction: CommandInteraction) {
     try {
-      const { guild } = interaction;
-      const { name } = this.getOptionsValues(interaction);
+      const { guild, options } = interaction;
 
       const values = validate(
         {
@@ -32,7 +32,7 @@ class Play extends Command {
           guildId: z.string(),
         },
         {
-          name,
+          name: options.getString("name"),
           guildId: guild?.id,
         }
       );
@@ -51,8 +51,8 @@ class Play extends Command {
       await player.play(voiceChannel, audio.url);
       await interaction.reply(`${audio.name}`);
     } catch (error) {
-      logger.error("Command: Play", error.message);
       await interaction.reply(error.message);
+      logger.error("Command: Play", error.message);
     }
   }
 }

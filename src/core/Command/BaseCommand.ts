@@ -1,62 +1,38 @@
 import { AutocompleteInteraction, CommandInteraction } from "discord.js";
-import { SlashCommandStringOption } from "@discordjs/builders";
-import Ajoin from "@ajoin/core/Ajoin";
-import * as discord from "@ajoin/helpers/discord";
-import { BaseCommand as IBaseCommand, Option, OptionParser } from "./types";
+import { ApplicationCommandOptionBase } from "@discordjs/builders";
 
-type Interaction = CommandInteraction | AutocompleteInteraction;
+import { Option } from "./types";
 
-abstract class BaseCommand implements IBaseCommand {
+export interface BaseCommandProps {
   name: string;
   description: string;
-  options: Record<string, Option>;
+  options?: Option[];
+}
+
+abstract class BaseCommand {
+  name: string;
+  description: string;
+  options: Option[] = [];
 
   get data() {
     return this.build().toJSON();
   }
 
-  get optionParsers() {
-    const map = new Map<string, OptionParser>();
-
-    for (const [name, option] of Object.entries(this.options)) {
-      map.set(name, option.parser);
-    }
-
-    return map;
-  }
-
-  constructor({ name, description, options = {} }: IBaseCommand) {
+  constructor({ name, description, options = [] }: BaseCommandProps) {
     this.name = name;
     this.description = description;
     this.options = options;
   }
 
-  getOptionsValues(interaction: Interaction) {
-    const values: Record<string, string | null> = {};
-
-    for (const [name, parser] of this.optionParsers) {
-      values[name] = parser(interaction);
-    }
-
-    return values;
-  }
-
-  buildOption(
-    name: string,
-    { description, required = true, autocomplete = false }: Option
-  ) {
-    return new SlashCommandStringOption()
+  buildOption<T extends ApplicationCommandOptionBase>(
+    builder: T,
+    { name, description, required = true }: Option
+  ): T {
+    return builder
       .setName(name)
       .setDescription(description)
-      .setRequired(required)
-      .setAutocomplete(autocomplete);
+      .setRequired(required);
   }
-
-  // getAudioPlayer(interaction: Interaction, guildId: string) {
-  //   const client = interaction.client as Ajoin;
-  //   const voiceChannel = discord.getVoiceChannel(interaction);
-  //   return client.getAudioPlayer(guildId);
-  // }
 
   abstract build(): any;
 

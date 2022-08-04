@@ -1,7 +1,7 @@
-import { CacheType, CommandInteraction } from "discord.js";
-import { Command, SubCommand } from "@ajoin/core/Command";
+import { CommandInteraction } from "discord.js";
+import { Command, CommandGroup } from "@ajoin/core/Command";
 
-class PingUser extends SubCommand {
+class PingUser extends Command {
   constructor() {
     super({
       name: "user",
@@ -9,12 +9,13 @@ class PingUser extends SubCommand {
     });
   }
 
-  async execute(interaction: CommandInteraction<CacheType>) {
-    await interaction.reply(`Pong! user`);
+  async execute(interaction: CommandInteraction) {
+    const { client } = interaction;
+    return interaction.reply(`Pong! user ${client.ws.ping}ms.`);
   }
 }
 
-class PingGroup extends SubCommand {
+class PingGroup extends Command {
   constructor() {
     super({
       name: "group",
@@ -22,23 +23,19 @@ class PingGroup extends SubCommand {
     });
   }
 
-  async execute(interaction: CommandInteraction<CacheType>) {
-    await interaction.reply(`Pong! group`);
+  async execute(interaction: CommandInteraction) {
+    return interaction.reply(`Pong! group`);
   }
 }
 
-class Ping extends Command {
+class PingCommandGroup extends CommandGroup {
   constructor() {
     super({
       name: "ping",
-      description: "A test command",
-      subCommands: [new PingUser(), new PingGroup()],
+      description: "ping group",
+      commands: [new PingUser(), new PingGroup()],
     });
-  }
-
-  async execute(interaction: CommandInteraction) {
-    await interaction.reply(`Pong!`);
   }
 }
 
-export default new Ping();
+export default new PingCommandGroup();

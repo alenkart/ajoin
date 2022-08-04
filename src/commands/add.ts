@@ -10,23 +10,24 @@ class Add extends Command {
     super({
       name: "add",
       description: "Adds a new sound",
-      options: {
-        name: {
+      options: [
+        {
+          name: "name",
           description: "Audio name",
-          parser: ({ options }) => options.getString("name"),
+          type: "string",
         },
-        url: {
+        {
+          name: "url",
           description: "Audio url (.mp3)",
-          parser: ({ options }) => options.getString("url"),
+          type: "string",
         },
-      },
+      ],
     });
   }
 
   async execute(interaction: CommandInteraction) {
     try {
-      const { user, guild } = interaction;
-      const { name, url } = this.getOptionsValues(interaction);
+      const { user, guild, options } = interaction;
 
       const values = validate(
         {
@@ -36,18 +37,18 @@ class Add extends Command {
           authorId: z.string(),
         },
         {
-          name,
-          url,
+          name: options.getString("name"),
+          url: options.getString("url"),
           guildId: guild?.id,
           authorId: user.id,
         }
       );
 
       await AudioModel.create(values);
-      await interaction.reply(`Added ${name} ${url}`);
+      await interaction.reply(`Added ${values.name} ${values.url}`);
     } catch (error) {
-      logger.error("Command: Add", error.message);
       await interaction.reply(error.message);
+      logger.error("Command: Add", error.message);
     }
   }
 }

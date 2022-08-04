@@ -1,18 +1,20 @@
-import { AutocompleteInteraction, CommandInteraction } from "discord.js";
-
-export type OptionParser = (
-  interaction: CommandInteraction | AutocompleteInteraction
-) => string | null;
-
-export interface Option {
+export interface BaseOption<T extends string> {
+  name: string;
   description: string;
+  type: T;
   required?: boolean;
-  autocomplete?: boolean;
-  parser: OptionParser;
 }
+
+export interface StringOption extends BaseOption<"string"> {
+  autocomplete?: boolean;
+}
+
+export interface UserOption extends BaseOption<"user"> {}
+
+export type Option = StringOption | UserOption;
 
 export interface BaseCommand {
   name: string;
   description: string;
-  options?: Record<string, Option>;
+  options?: any;
 }

@@ -13,10 +13,11 @@ class Ready extends Event<"ready"> {
   }
 
   async execute(client: Client) {
-    console.log("Discord Js", client?.user?.tag);
-
-    const { DISCORD_TOKEN, GUILD_ID = '' } = process.env;
+    const { DISCORD_TOKEN, GUILD_ID = '', NODE_ENV } = process.env;
     const CLIENT_ID = client?.user?.id;
+
+    console.log("Discord Js:", client?.user?.tag);
+    console.log("Environment:", NODE_ENV);
 
     const values = validate(
       {
@@ -35,7 +36,7 @@ class Ready extends Event<"ready"> {
 
     try {
       const route =
-        process.env.ENV === "production"
+        process.env.NODE_ENV === "production"
           ? Routes.applicationCommands(values.CLIENT_ID)
           : Routes.applicationGuildCommands(values.CLIENT_ID, values.GUILD_ID);
 

@@ -11,10 +11,12 @@ const eventTable: any[] = [];
 const ajoin = new Ajoin({
   intents: [
     IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.GuildVoiceStates,
     IntentsBitField.Flags.GuildIntegrations,
   ],
 });
+
 
 Object.values(commands).forEach((command) => {
   commandTable.push({ command: command.name });

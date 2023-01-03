@@ -42,7 +42,7 @@ class VoiceStateUpdate extends Event<"voiceStateUpdate"> {
         },
         {
           guildId: guild?.id,
-          authorId: member?.id,
+          authorId: `<@!${member?.id}>`,
         }
       );
 

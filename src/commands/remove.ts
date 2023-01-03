@@ -1,11 +1,12 @@
 import { CommandInteraction } from "discord.js";
 import { z } from "zod";
-import { Command } from "@ajoin/core/Command";
+import { SlashCommand } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
 import validate from "@ajoin/helpers/validate";
+import prisma from "@ajoin/helpers/prisma";
 
-class Remove extends Command {
+class Remove extends SlashCommand {
   constructor() {
     super({
       name: "remove",
@@ -30,19 +31,22 @@ class Remove extends Command {
           guildId: z.string(),
         },
         {
-          name: options.getString("name"),
+          name: options.get("name")?.value,
           guildId: guild?.id,
         }
       );
 
-      const audio = await AudioModel.findOne(values);
+      const audio = await prisma.audio.findFirst({ where: values });
 
-      if (!audio) throw new Error("Audio not found");
+      if (!audio) {
+        interaction.reply("Audio not found");
+        return;
+      }
 
       await AudioModel.deleteById(audio.id);
-      await interaction.reply(`Removed ${name}`);
+      await interaction.reply(`Removed ${values.name}`);
     } catch (error) {
-      await interaction.reply(error.message);
+      await interaction.reply("An Unexpected Error Occurred");
       logger.error("Command: Remove", error.message);
     }
   }

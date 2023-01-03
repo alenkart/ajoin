@@ -1,9 +1,9 @@
 import { Client, Collection } from "discord.js";
-import { Command, CommandGroup } from "@ajoin/core/Command";
+import { SlashCommand } from "@ajoin/core/Command";
 import AudioPlayer from "@ajoin/core/AudioPlayer";
 
 class Ajoin extends Client {
-  commands = new Collection<string, Command | CommandGroup>();
+  commands = new Collection<string, SlashCommand>();
   audioPlayers = new Collection<string, AudioPlayer>();
 
   getCommand(commandName: string) {

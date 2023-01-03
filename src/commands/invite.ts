@@ -1,9 +1,9 @@
 import { CommandInteraction } from "discord.js";
-import { Command } from "@ajoin/core/Command";
+import { SlashCommand } from "@ajoin/core/Command";
 import logger from "@ajoin/helpers/logger";
 import { getInviteUrl } from "@ajoin/helpers/discord";
 
-class Invite extends Command {
+class Invite extends SlashCommand {
   constructor() {
     super({
       name: "invite",
@@ -30,7 +30,7 @@ class Invite extends Command {
         ],
       });
     } catch (error) {
-      await interaction.reply(error.message);
+      await interaction.reply("An Unexpected Error Occurred");
       logger.error("Command: Add", error.message);
     }
   }

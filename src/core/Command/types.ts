@@ -12,9 +12,3 @@ export interface StringOption extends BaseOption<"string"> {
 export interface UserOption extends BaseOption<"user"> {}
 
 export type Option = StringOption | UserOption;
-
-export interface BaseCommand {
-  name: string;
-  description: string;
-  options?: any;
-}

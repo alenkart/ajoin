@@ -1,13 +1,14 @@
 import { CommandInteraction } from "discord.js";
 import { z } from "zod";
 import Ajoin from "@ajoin/core/Ajoin";
-import { Command } from "@ajoin/core/Command";
+import { SlashCommand } from "@ajoin/core/Command";
 import AudioModel from "@ajoin/models/Audio";
 import logger from "@ajoin/helpers/logger";
 import validate from "@ajoin/helpers/validate";
 import * as discord from "@ajoin/helpers/discord";
+import prisma from "@ajoin/helpers/prisma";
 
-class Play extends Command {
+class Play extends SlashCommand {
   constructor() {
     super({
       name: "play",
@@ -32,26 +33,32 @@ class Play extends Command {
           guildId: z.string(),
         },
         {
-          name: options.getString("name"),
+          name: options.get("name")?.value,
           guildId: guild?.id,
         }
       );
 
-      const audio = await AudioModel.findOne(values);
+      const audio = await prisma.audio.findFirst({ where: values });
 
-      if (!audio) throw new Error("Audio not found");
+      if (!audio) {
+        interaction.reply("Audio not found");
+        return;
+      }
 
       const voiceChannel = discord.getVoiceChannel(interaction);
 
-      if (!voiceChannel) throw new Error("Voice Channel is undefined");
+      if (!voiceChannel) {
+        interaction.reply("Voice Channel is undefined");
+        return;
+      }
 
       const client = interaction.client as Ajoin;
       const player = client.getAudioPlayer(values.guildId);
 
       await player.play(voiceChannel, audio.url);
-      await interaction.reply(`${audio.name}`);
+      interaction.reply(`${audio.name}`);
     } catch (error) {
-      await interaction.reply(error.message);
+      await interaction.reply("An Unexpected Error Occurred");
       logger.error("Command: Play", error.message);
     }
   }

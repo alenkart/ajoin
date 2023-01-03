@@ -39,7 +39,13 @@ class AudioModel {
     });
   }
 
-  async searchByName(name: string, where: Partial<Audio>) {
+  async findFirst(where: Partial<Audio>) {
+    return await prisma.audio.findFirst({
+      where: where,
+    });
+  }
+
+  async findMany(name: string, where: Partial<Audio>) {
     return await prisma.audio.findMany({
       where: {
         ...where,

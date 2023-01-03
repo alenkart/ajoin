@@ -1,10 +1,10 @@
-import { Client, Interaction, VoiceChannel } from "discord.js";
+import { BaseInteraction, VoiceChannel } from "discord.js";
 
 export function isVoiceEmpty(channel: VoiceChannel) {
   return channel.members.filter((member) => !member.user.bot).size === 0;
 }
 
-export function getVoiceChannel(interaction: Interaction) {
+export function getVoiceChannel(interaction: BaseInteraction) {
   const { user, guild } = interaction;
 
   if (!user.id) return;

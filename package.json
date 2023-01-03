@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
+    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "dev": "tsnd -r tsconfig-paths/register src/index.ts",
     "db:push": "yarn prisma db push",
     "db:gen": "yarn prisma generate"
@@ -21,6 +22,7 @@
     "dotenv": "^16.0.3",
     "ffmpeg-static": "^5.1.0",
     "libsodium-wrappers": "^0.7.10",
+    "ts-node": "^10.9.1",
     "zod": "^3.20.2"
   },
   "devDependencies": {

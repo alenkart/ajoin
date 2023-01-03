@@ -38,6 +38,12 @@ class Play extends SlashCommand {
         }
       );
 
+      logger.info(
+        `Event: InteractionCreate`,
+        `${interaction.user.tag} | ${ interaction.commandName} | ${values.name}`,
+       
+      );
+
       const audio = await prisma.audio.findFirst({ where: values });
 
       if (!audio) {

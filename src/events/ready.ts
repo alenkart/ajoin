@@ -15,7 +15,7 @@ class Ready extends Event<"ready"> {
   async execute(client: Client) {
     console.log("Discord Js", client?.user?.tag);
 
-    const { DISCORD_TOKEN, GUILD_ID } = process.env;
+    const { DISCORD_TOKEN, GUILD_ID = '' } = process.env;
     const CLIENT_ID = client?.user?.id;
 
     const values = validate(

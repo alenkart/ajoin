@@ -30,12 +30,6 @@ class InteractionCreate extends Event<Events.InteractionCreate> {
 
       const command = interaction.client.getCommand(interaction.commandName);
 
-      logger.info(
-        `Event: InteractionCreate`,
-        interaction.user.tag,
-        interaction.commandName
-      );
-
       if (!command) throw new Error("Command not found");
 
       this.executeCommand(command, interaction);
